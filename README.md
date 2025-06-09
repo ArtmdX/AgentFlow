@@ -2,9 +2,7 @@
 
 **Sistema de CRM especializado para Agências de Viagens**
 
-![Status](https://img.shields.io/badge/Status-MVP%20Development-yellow)
-![Version](https://img.shields.io/badge/Version-0.1.0-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-MVP%20Development-yellow) ![Version](https://img.shields.io/badge/Version-0.1.0-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
@@ -26,21 +24,25 @@ O **AgentFlow** é um CRM desenvolvido especificamente para agências de viagens
 ## 🛠️ Stack Tecnológica
 
 ### Frontend & Backend
+
 - **Framework:** Next.js 14 (App Router)
 - **Linguagem:** TypeScript
 - **Styling:** Tailwind CSS
 - **UI Components:** Shadcn/ui
 
 ### Banco de Dados
+
 - **Database:** PostgreSQL
 - **ORM:** Prisma
 - **Migrations:** Prisma Migrate
 
 ### Autenticação
+
 - **Auth:** NextAuth.js v5
 - **Provider:** Credentials + JWT
 
 ### Deploy & Infraestrutura
+
 - **Frontend:** Vercel
 - **Database:** Supabase/Railway
 - **Storage:** Vercel Blob (futuro)
@@ -50,6 +52,7 @@ O **AgentFlow** é um CRM desenvolvido especificamente para agências de viagens
 ## 🚀 Como Executar
 
 ### Pré-requisitos
+
 - Node.js 18+
 - PostgreSQL 15+
 - pnpm/npm/yarn
@@ -57,22 +60,26 @@ O **AgentFlow** é um CRM desenvolvido especificamente para agências de viagens
 ### Instalação
 
 1. **Clone o repositório**
+
 ```bash
 git clone https://github.com/seu-usuario/agentflow-crm.git
 cd agentflow-crm
 ```
 
 2. **Instale as dependências**
+
 ```bash
 npm install
 ```
 
 3. **Configure as variáveis de ambiente**
+
 ```bash
 cp .env.example .env.local
 ```
 
 Edite o `.env.local` com suas configurações:
+
 ```env
 # Database
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/agentflow"
@@ -86,6 +93,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 4. **Configure o banco de dados**
+
 ```bash
 # Gerar o cliente Prisma
 npx prisma generate
@@ -98,37 +106,12 @@ npx prisma db seed
 ```
 
 5. **Execute o projeto**
+
 ```bash
 npm run dev
 ```
 
 Acesse: `http://localhost:3000`
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-agentflow-crm/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Rotas de autenticação  
-│   ├── dashboard/         # Páginas principais
-│   ├── api/               # API Routes
-│   └── globals.css        # Estilos globais
-├── components/            # Componentes React
-│   ├── ui/               # Componentes base (shadcn)
-│   ├── forms/            # Formulários
-│   └── layouts/          # Layouts
-├── lib/                  # Utilitários e configurações
-│   ├── auth.ts           # Configuração NextAuth
-│   ├── db.ts             # Cliente Prisma
-│   └── utils.ts          # Funções utilitárias
-├── prisma/               # Schema e migrations
-│   ├── schema.prisma     # Definição do banco
-│   └── migrations/       # Histórico de mudanças
-├── types/                # Definições TypeScript
-└── public/               # Arquivos estáticos
-```
 
 ---
 
@@ -144,6 +127,7 @@ agentflow-crm/
 - **Payments** - Controle de pagamentos
 
 ### Relacionamentos
+
 - User → Travels (1:N)
 - Customer → Travels (1:N)
 - Travel → Passengers (1:N)
@@ -155,6 +139,7 @@ agentflow-crm/
 ## 🎨 Design System
 
 ### Cores Principais
+
 - **Primary:** Blue (#3B82F6)
 - **Secondary:** Slate (#64748B)
 - **Success:** Green (#10B981)
@@ -162,6 +147,7 @@ agentflow-crm/
 - **Error:** Red (#EF4444)
 
 ### Componentes Base
+
 - Baseado no **Shadcn/ui**
 - **Tailwind CSS** para customizações
 - **Lucide Icons** para ícones
@@ -172,21 +158,25 @@ agentflow-crm/
 ## 📋 Roadmap MVP
 
 ### ✅ Fase 1 - Fundação
+
 - [x] Setup do projeto
 - [x] Autenticação básica
 - [x] Layout principal
 
 ### 🚧 Fase 2 - Core Features (Em andamento)
+
 - [ ] CRUD de clientes
 - [ ] CRUD de viagens
 - [ ] Dashboard básico
 
 ### 📅 Fase 3 - Polish
+
 - [ ] Interface responsiva
 - [ ] Relatórios básicos
 - [ ] Testes e correções
 
 ### 🔮 Futuro (Pós-MVP)
+
 - [ ] Integrações com APIs
 - [ ] Notificações por email
 - [ ] App mobile
@@ -212,12 +202,14 @@ npm run test:coverage
 ## 📦 Deploy
 
 ### Vercel (Recomendado)
+
 ```bash
 # Deploy automático via Git
 git push origin main
 ```
 
 ### Manual
+
 ```bash
 # Build do projeto
 npm run build
@@ -246,6 +238,7 @@ Este projeto está sob a licença **MIT**.
 ## 👨‍💻 Autor
 
 **Seu Nome**
+
 - LinkedIn: Arthur Mauricio https://www.linkedin.com/in/arthur-mauricio-214a5323a/
 - Email: arthur.mdx1234@gmail.com
 
@@ -254,6 +247,7 @@ Este projeto está sob a licença **MIT**.
 ## 📞 Suporte
 
 Para dúvidas e suporte:
+
 - 📧 Email: arthur.mdx1234@gmail.com
 - 💬 WhatsApp: (61)98662-4064
 - 📋 Issues: [GitHub Issues](https://github.com/artmdx/agentflow/issues)

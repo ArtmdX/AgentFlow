@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email            String     @unique @db.VarChar(255)
+  passwordHash     String     @map("password_hash") @db.VarChar(255)
+  firstName        String     @map("first_name") @db.VarChar(100)
+  lastName         String     @map("last_name") @db.VarChar(100)
+  phone            String?    @db.VarChar(20)
+  role             user_role? @default(agent)
+  isActive         Boolean?   @default(true) @map("is_active")
+  createdAt        DateTime?  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  activities       Activity[] @relation("ActivityUser")
+  customersCreated Customer[] @relation("CustomerCreatedBy")
+  payments         Payment[]  @relation("PaymentCreatedBy")
+  travels          Travel[]   @relation("TravelAgent")
+
+  @@map("users")
+}
+
+model Customer {
+  id                  String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  firstName           String         @map("first_name") @db.VarChar(100)
+  lastName            String         @map("last_name") @db.VarChar(100)
+  email               String?        @db.VarChar(255)
+  phone               String?        @db.VarChar(20)
+  documentType        document_type? @default(cpf) @map("document_type")
+  documentNumber      String?        @map("document_number") @db.VarChar(50)
+  birthDate           DateTime?      @map("birth_date") @db.Date
+  gender              gender_type?
+  addressStreet       String?        @map("address_street") @db.VarChar(255)
+  addressNumber       String?        @map("address_number") @db.VarChar(20)
+  addressComplement   String?        @map("address_complement") @db.VarChar(100)
+  addressNeighborhood String?        @map("address_neighborhood") @db.VarChar(100)
+  addressCity         String?        @map("address_city") @db.VarChar(100)
+  addressState        String?        @map("address_state") @db.VarChar(50)
+  addressZipCode      String?        @map("address_zip_code") @db.VarChar(20)
+  addressCountry      String?        @default("Brasil") @map("address_country") @db.VarChar(100)
+  createdById         String?        @map("created_by") @db.Uuid
+  isActive            Boolean?       @default(true) @map("is_active")
+  notes               String?
+  createdAt           DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt           DateTime?      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  activities          Activity[]     @relation("ActivityCustomer")
+  createdBy           User?          @relation("CustomerCreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  travels             Travel[]       @relation("TravelCustomer")
+
+  @@index([isActive], map: "idx_customers_active")
+  @@index([createdById], map: "idx_customers_created_by")
+  @@index([documentNumber], map: "idx_customers_document")
+  @@index([email], map: "idx_customers_email")
+  @@index([firstName, lastName], map: "idx_customers_name")
+  @@map("customers")
+}
+
+model Travel {
+  id              String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customerId      String         @map("customer_id") @db.Uuid
+  agentId         String         @map("agent_id") @db.Uuid
+  title           String         @db.VarChar(255)
+  description     String?
+  destination     String         @db.VarChar(255)
+  departureCity   String?        @map("departure_city") @db.VarChar(255)
+  departureDate   DateTime       @map("departure_date") @db.Date
+  returnDate      DateTime?      @map("return_date") @db.Date
+  createdDate     DateTime?      @default(dbgenerated("CURRENT_DATE")) @map("created_date") @db.Date
+  totalValue      Decimal?       @map("total_value") @db.Decimal(10, 2)
+  paidValue       Decimal?       @default(0) @map("paid_value") @db.Decimal(10, 2)
+  currency        currency_type? @default(BRL)
+  status          travel_status? @default(orcamento)
+  isInternational Boolean?       @default(false) @map("is_international")
+  passengerCount  Int?           @default(1) @map("passenger_count")
+  notes           String?
+  internalNotes   String?        @map("internal_notes")
+  createdAt       DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime?      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  activities      Activity[]     @relation("ActivityTravel")
+  passengers      Passenger[]    @relation("PassengerTravel")
+  payments        Payment[]      @relation("PaymentTravel")
+  agent           User           @relation("TravelAgent", fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  customer        Customer       @relation("TravelCustomer", fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([agentId], map: "idx_travels_agent")
+  @@index([currency], map: "idx_travels_currency")
+  @@index([customerId], map: "idx_travels_customer")
+  @@index([departureDate, returnDate], map: "idx_travels_dates")
+  @@index([destination], map: "idx_travels_destination")
+  @@index([status], map: "idx_travels_status")
+  @@map("travels")
+}
+
+model Passenger {
+  id             String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  travelId       String          @map("travel_id") @db.Uuid
+  firstName      String          @map("first_name") @db.VarChar(100)
+  lastName       String          @map("last_name") @db.VarChar(100)
+  documentType   document_type?  @default(cpf) @map("document_type")
+  documentNumber String?         @map("document_number") @db.VarChar(50)
+  birthDate      DateTime?       @map("birth_date") @db.Date
+  gender         gender_type?
+  passengerType  passenger_type? @default(adult) @map("passenger_type")
+  isPrimary      Boolean?        @default(false) @map("is_primary")
+  createdAt      DateTime?       @default(now()) @map("created_at") @db.Timestamp(6)
+  travel         Travel          @relation("PassengerTravel", fields: [travelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([isPrimary], map: "idx_passengers_primary")
+  @@index([travelId], map: "idx_passengers_travel")
+  @@map("passengers")
+}
+
+model Activity {
+  id           String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  travelId     String?       @map("travel_id") @db.Uuid
+  customerId   String?       @map("customer_id") @db.Uuid
+  userId       String        @map("user_id") @db.Uuid
+  activityType activity_type @map("activity_type")
+  title        String        @db.VarChar(255)
+  description  String?
+  metadata     Json?
+  createdAt    DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
+  customer     Customer?     @relation("ActivityCustomer", fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  travel       Travel?       @relation("ActivityTravel", fields: [travelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user         User          @relation("ActivityUser", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([createdAt], map: "idx_activities_created")
+  @@index([customerId], map: "idx_activities_customer")
+  @@index([travelId], map: "idx_activities_travel")
+  @@index([activityType], map: "idx_activities_type")
+  @@index([userId], map: "idx_activities_user")
+  @@map("activities")
+}
+
+model Payment {
+  id              String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  travelId        String         @map("travel_id") @db.Uuid
+  amount          Decimal        @db.Decimal(10, 2)
+  currency        currency_type? @default(BRL)
+  paymentMethod   payment_method @map("payment_method")
+  paymentDate     DateTime       @map("payment_date") @db.Date
+  referenceNumber String?        @map("reference_number") @db.VarChar(100)
+  notes           String?
+  createdById     String         @map("created_by") @db.Uuid
+  createdAt       DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy       User           @relation("PaymentCreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  travel          Travel         @relation("PaymentTravel", fields: [travelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([paymentDate], map: "idx_payments_date")
+  @@index([paymentMethod], map: "idx_payments_method")
+  @@index([travelId], map: "idx_payments_travel")
+  @@map("payments")
+}
+
+enum activity_type {
+  status_change
+  payment
+  contact
+  note
+  created
+  updated
+}
+
+enum currency_type {
+  BRL
+  USD
+  EUR
+  ARS
+}
+
+enum document_type {
+  cpf
+  cnpj
+  passport
+  rg
+}
+
+enum gender_type {
+  M
+  F
+  other
+}
+
+enum passenger_type {
+  adult
+  child
+  infant
+}
+
+enum payment_method {
+  cash
+  credit_card
+  debit_card
+  bank_transfer
+  pix
+  check
+}
+
+enum travel_status {
+  orcamento
+  aguardando_pagamento
+  confirmada
+  em_andamento
+  finalizada
+  cancelada
+}
+
+enum user_role {
+  admin
+  agent
+  manager
+}
