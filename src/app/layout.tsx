@@ -1,16 +1,21 @@
-// app/layout.tsx
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import { ReactNode } from 'react';
+import { Providers } from '@/components/providers/SessionProvider';
 
-export const metadata = {
-  title: 'Agent Flow',
-  description: 'Sistema de CRM para agentes de viagens'
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'AgentFlow CRM - Gestão de Viagens',
+  description: 'Sistema de gestão para agências de viagens'
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
