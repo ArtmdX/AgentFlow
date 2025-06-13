@@ -8,10 +8,12 @@ export function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith('/auth/login');
 
   if (!token && !isAuthPage) {
+    console.log('User is not authenticated, redirecting to login');
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   if (token && isAuthPage) {
+    console.log('User is authenticated, redirecting to dashboard');
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
