@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id               String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id               String     @id @default(uuid()) @db.Uuid
   email            String     @unique @db.VarChar(255)
   passwordHash     String     @map("password_hash") @db.VarChar(255)
   firstName        String     @map("first_name") @db.VarChar(100)
@@ -28,7 +28,7 @@ model User {
 }
 
 model Customer {
-  id                  String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                  String         @id @default(uuid()) @db.Uuid
   firstName           String         @map("first_name") @db.VarChar(100)
   lastName            String         @map("last_name") @db.VarChar(100)
   email               String?        @db.VarChar(255)
@@ -63,7 +63,7 @@ model Customer {
 }
 
 model Travel {
-  id              String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id              String         @id @default(uuid()) @db.Uuid
   customerId      String         @map("customer_id") @db.Uuid
   agentId         String         @map("agent_id") @db.Uuid
   title           String         @db.VarChar(255)
@@ -99,7 +99,7 @@ model Travel {
 }
 
 model Passenger {
-  id             String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id             String          @id @default(uuid()) @db.Uuid
   travelId       String          @map("travel_id") @db.Uuid
   firstName      String          @map("first_name") @db.VarChar(100)
   lastName       String          @map("last_name") @db.VarChar(100)
@@ -118,7 +118,7 @@ model Passenger {
 }
 
 model Activity {
-  id           String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           String        @id @default(uuid()) @db.Uuid
   travelId     String?       @map("travel_id") @db.Uuid
   customerId   String?       @map("customer_id") @db.Uuid
   userId       String        @map("user_id") @db.Uuid
@@ -140,7 +140,7 @@ model Activity {
 }
 
 model Payment {
-  id              String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id              String         @id @default(uuid()) @db.Uuid
   travelId        String         @map("travel_id") @db.Uuid
   amount          Decimal        @db.Decimal(10, 2)
   currency        currency_type? @default(BRL)

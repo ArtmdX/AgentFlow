@@ -2,8 +2,7 @@
 
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Customer, document_type } from '@prisma/client';
-import { create } from 'domain';
+import { Customer } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
