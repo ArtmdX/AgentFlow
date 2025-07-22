@@ -6,15 +6,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export async function getCustomers(): Promise<Customer[]> {
   try {
+    console.log(API_BASE_URL);
     const requestHeaders = await headers();
-    // Usamos 'no-cache' para garantir que os dados sejam sempre frescos ao navegar.
     const response = await fetch(`${API_BASE_URL}/customers`, {
       cache: 'no-cache',
       headers: requestHeaders
     });
 
     if (!response.ok) {
-      // Se a resposta da API não for bem-sucedida, lançamos um erro.
       console.error('Erro ao buscar clientes:', response.statusText);
       throw new Error('Falha ao buscar os dados dos clientes.');
     }
@@ -27,6 +26,30 @@ export async function getCustomers(): Promise<Customer[]> {
   }
 }
 
+export async function createCustomer(customerData: Omit<Customer, 'id'>): Promise<Customer | null> {
+  try {
+    const requestHeaders = await headers();
+    const response = await fetch(`${API_BASE_URL}/customers`, {
+      method: 'POST',
+      headers: {
+        ...requestHeaders,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customerData)
+    });
+
+    if (!response.ok) {
+      console.error('Erro ao criar cliente:', response.statusText);
+      throw new Error('Falha ao criar o cliente.');
+    }
+
+    const newCustomer = await response.json();
+    return newCustomer;
+  } catch (error) {
+    console.error('Erro no serviço de criação de cliente:', error);
+    return null;
+  }
+}
 // Futuramente, adicionar outras funções aqui:
 // export async function createCustomer(customerData: Omit<Customer, 'id'>) { ... }
 // export async function deleteCustomer(customerId: string) { ... }

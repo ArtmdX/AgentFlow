@@ -19,7 +19,7 @@ export default async function CustomersPage() {
         </div>
         <div>
           <Link href="/dashboard/customers/new">
-            <Button className="flex items-center space-x-2">
+            <Button className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer">
               <PlusCircle className="h-5 w-5" />
               <span>Adicionar Cliente</span>
             </Button>

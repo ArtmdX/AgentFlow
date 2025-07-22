@@ -38,7 +38,6 @@ model Customer {
   gender              gender_type?
   addressStreet       String?        @map("address_street") @db.VarChar(255)
   addressNumber       String?        @map("address_number") @db.VarChar(20)
-  addressComplement   String?        @map("address_complement") @db.VarChar(100)
   addressNeighborhood String?        @map("address_neighborhood") @db.VarChar(100)
   addressCity         String?        @map("address_city") @db.VarChar(100)
   addressState        String?        @map("address_state") @db.VarChar(50)
