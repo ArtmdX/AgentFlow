@@ -38,9 +38,9 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { firstName, lastName, email, phone, documentNumber, documentType }: Customer = body;
+    const { firstName, lastName, email, phone }: Customer = body;
 
-    if (!firstName || !lastName || !email || !phone || !documentNumber || !documentType) {
+    if (!firstName || !lastName || !email || !phone) {
       return NextResponse.json({ message: 'Campos obrigatórios não foram preenchidos' }, { status: 400 });
     }
 

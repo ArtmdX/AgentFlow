@@ -27,7 +27,7 @@ export default function NewCustomerPage() {
       }
 
       // Sucesso! Redireciona para a lista de clientes
-      router.push('/customers');
+      router.push('/dashboard/customers');
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');

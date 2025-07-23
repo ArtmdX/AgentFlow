@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importando o hook de roteamento
+import { PlusCircle } from 'lucide-react'; // Importando um ícone para o botão
 import { Customer } from '@prisma/client';
+
 interface CustomerTableProps {
   initialCustomers: Customer[];
 }
@@ -9,11 +12,22 @@ interface CustomerTableProps {
 export function CustomerTable({ initialCustomers }: CustomerTableProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [customers, setCustomers] = useState(initialCustomers);
+  const router = useRouter(); // Inicializando o router
+
+  // Função para lidar com o clique no botão de novo orçamento
+  const handleNewQuoteClick = (e: React.MouseEvent, customerId: string) => {
+    e.stopPropagation();
+
+    // 2. Redireciona para a futura página de novo orçamento, passando o ID do cliente
+    // router.push(`/travels/new?customerId=${customerId}`);
+    console.log(`Criar novo orçamento para o cliente: ${customerId}`);
+    // Descomente a linha acima quando a página de viagens estiver pronta.
+  };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow overflow-x-auto">
       {customers.length === 0 ? (
-        <p className="text-center text-gray-500">Nenhum cliente encontrado.</p>
+        <p className="text-center text-gray-500 p-6">Nenhum cliente encontrado.</p>
       ) : (
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -28,7 +42,10 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {customers.map(customer => (
-              <tr key={customer.id}>
+              <tr
+                key={customer.id}
+                className="hover:bg-indigo-100 cursor-pointer transition-colors duration-150"
+                onClick={() => router.push(`/customers/${customer.id}`)}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{`${customer.firstName} ${customer.lastName}`}</div>
                 </td>
@@ -39,10 +56,12 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
                   <div className="text-sm text-gray-700">{customer.phone || '-'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {/* Espaço para futuros botões de ação (Editar, Excluir) */}
-                  <a href="#" className="text-primary-600 hover:text-primary-900">
-                    Ver Detalhes
-                  </a>
+                  <button
+                    onClick={e => handleNewQuoteClick(e, customer.id)}
+                    className="p-1 rounded-full text-gray-500 hover:bg-primary-100 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    title="Novo Orçamento">
+                    <PlusCircle className="h-5 w-5" />
+                  </button>
                 </td>
               </tr>
             ))}
