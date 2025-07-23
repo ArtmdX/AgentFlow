@@ -51,5 +51,24 @@ export async function createCustomer(customerData: Omit<Customer, 'id'>): Promis
   }
 }
 // Futuramente, adicionar outras funções aqui:
+export async function getCustomerById(id: string): Promise<Customer | null> {
+  try {
+    const requestHeaders = await headers();
+    const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
+      headers: requestHeaders
+    });
+
+    if (!response.ok) {
+      console.error('Erro ao buscar cliente:', response.statusText);
+      return null;
+    }
+
+    const customer = await response.json();
+    return customer;
+  } catch (error) {
+    console.error('Erro no serviço de busca de cliente:', error);
+    return null;
+  }
+}
 // export async function createCustomer(customerData: Omit<Customer, 'id'>) { ... }
 // export async function deleteCustomer(customerId: string) { ... }

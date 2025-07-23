@@ -59,7 +59,7 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
               <tr
                 key={customer.id}
                 className="hover:bg-indigo-100 cursor-pointer transition-colors duration-150"
-                onClick={() => router.push(`/customers/${customer.id}`)}>
+                onClick={() => router.push(`/dashboard/customers/${customer.id}`)}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{`${customer.firstName} ${customer.lastName}`}</div>
                 </td>
@@ -72,15 +72,15 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={e => handleNewQuoteClick(e, customer.id)}
-                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                     title="Novo Orçamento">
-                    <PlusCircle className="h-5 w-5" />
+                    <PlusCircle className="h-6 w-6" />
                   </button>
                   <button
                     onClick={e => handleNewMessageClick(e, customer.phone || '')}
-                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                     title="Iniciar Conversa no WhatsApp">
-                    <MessageCircle className="h-5 w-5" />
+                    <MessageCircle className="h-6 w-6" />
                   </button>
                 </td>
               </tr>
