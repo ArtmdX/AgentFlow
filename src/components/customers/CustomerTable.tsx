@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Importando o hook de roteamento
-import { PlusCircle } from 'lucide-react'; // Importando um ícone para o botão
+import { MessageCircle, PlusCircle } from 'lucide-react'; // Importando um ícone para o botão
 import { Customer } from '@prisma/client';
 
 interface CustomerTableProps {
@@ -22,6 +22,20 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
     // router.push(`/travels/new?customerId=${customerId}`);
     console.log(`Criar novo orçamento para o cliente: ${customerId}`);
     // Descomente a linha acima quando a página de viagens estiver pronta.
+  };
+
+  const handleNewMessageClick = (e: React.MouseEvent, customerPhone: string | null) => {
+    // 1. Impede que o clique se propague para a linha da tabela
+    e.stopPropagation();
+
+    if (!customerPhone) {
+      console.error('Número de telefone do cliente não disponível.');
+      return;
+    }
+
+    const whatsappUrl = `https://wa.me/${customerPhone}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -58,9 +72,15 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={e => handleNewQuoteClick(e, customer.id)}
-                    className="p-1 rounded-full text-gray-500 hover:bg-primary-100 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                     title="Novo Orçamento">
                     <PlusCircle className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={e => handleNewMessageClick(e, customer.phone || '')}
+                    className="p-1 rounded-full text-gray-500 hover:text-indigo-700 cursor-pointer hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    title="Iniciar Conversa no WhatsApp">
+                    <MessageCircle className="h-5 w-5" />
                   </button>
                 </td>
               </tr>
