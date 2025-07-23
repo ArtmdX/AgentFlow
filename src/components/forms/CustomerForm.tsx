@@ -38,6 +38,7 @@ export function CustomerForm({
       setValue('addressStreet', addressData.logradouro, { shouldValidate: true });
       setValue('addressCity', addressData.localidade, { shouldValidate: true });
       setValue('addressState', addressData.uf, { shouldValidate: true });
+      setValue('addressNeighborhood', addressData.bairro, { shouldValidate: true });
     }
   };
 
@@ -88,7 +89,7 @@ export function CustomerForm({
         <h3 className="text-lg font-medium leading-6 text-gray-900 border-b pb-4">Informações Adicionais (Opcional)</h3>
         <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
           <div className="sm:col-span-1">
-            <Select label="Tipo de Documento" {...register('documentType', { required: true })}>
+            <Select label="Tipo de Documento" {...register('documentType')}>
               <option value="cpf">CPF</option>
               <option value="passport">Passaporte</option>
               <option value="rg">RG</option>
@@ -97,11 +98,7 @@ export function CustomerForm({
           </div>
 
           <div className="sm:col-span-2">
-            <Input
-              label="Número do Documento"
-              {...register('documentNumber', { required: 'O número do documento é obrigatório' })}
-              error={errors.documentNumber?.message}
-            />
+            <Input label="Número do Documento" {...register('documentNumber')} error={errors.documentNumber?.message} />
           </div>
 
           <div className="sm:col-span-1">
