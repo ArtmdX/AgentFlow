@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { getAddressByCEP } from '@/services/cepService';
 import { Customer } from '@prisma/client';
+import { Textarea } from '../ui/TextArea';
 
 interface CustomerFormProps {
   onSubmit: (data: Customer) => void;
@@ -102,6 +103,22 @@ export function CustomerForm({
           </div>
 
           <div className="sm:col-span-1">
+            <Input
+              label="Data de nascimento"
+              type="date"
+              {...register('birthDate')}
+              error={errors.birthDate?.message}
+            />
+          </div>
+
+          <div className="sm:col-span-1">
+            <Select label="Gênero" {...register('gender')}>
+              <option value="H">M</option>
+              <option value="M">F</option>
+            </Select>
+          </div>
+
+          <div className="sm:col-span-1">
             <Input label="CEP" {...register('addressZipCode')} onBlur={handleCepBlur} placeholder="Digite o CEP" />
           </div>
 
@@ -123,6 +140,10 @@ export function CustomerForm({
 
           <div className="sm:col-span-2">
             <Input label="Estado" {...register('addressState')} />
+          </div>
+
+          <div className="sm:col-span-6">
+            <Textarea label="Observações" {...register('notes')} />
           </div>
         </div>
       </div>

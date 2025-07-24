@@ -8,6 +8,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   const session = await getServerSession(authOptions);
   const { id } = await params;
   const costumerId: string = id;
+  let birthDate: string | null = null;
 
   if (!session?.user.id) {
     window.location.href = '/auth/login';
@@ -19,6 +20,17 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   if (!customer) {
     notFound();
   }
+
+  const isoString = '1990-01-01T00:00:00.000Z';
+  const dateObject = new Date(isoString);
+
+  // ✅ A opção timeZone: 'UTC' força a formatação a usar a data como ela é em UTC.
+  birthDate = dateObject.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC'
+  });
 
   return (
     <div className="space-y-8">
@@ -43,6 +55,8 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           <InfoField label="Tipo de Documento" value={customer.documentType} />
           <InfoField label="Número do Documento" value={customer.documentNumber} />
           <InfoField label="Gênero" value={customer.gender} />
+          <InfoField label="Data de Nascimento" value={birthDate} />
+          <InfoField label="Observações" value={customer.notes} />
         </dl>
       </div>
 

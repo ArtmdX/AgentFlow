@@ -25,7 +25,6 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
   };
 
   const handleNewMessageClick = (e: React.MouseEvent, customerPhone: string | null) => {
-    // 1. Impede que o clique se propague para a linha da tabela
     e.stopPropagation();
 
     if (!customerPhone) {
