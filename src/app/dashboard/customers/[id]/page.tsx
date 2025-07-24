@@ -1,35 +1,27 @@
 import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { getCustomerById } from '@/services/customerService';
 import { User, Mail, Phone, MapPin } from 'lucide-react';
 
-// A função recebe 'params', que contém os segmentos dinâmicos da URL.
-// Neste caso, params.id
-export default async function CustomerDetailPage({ params }: { params: { id: string } }) {
+export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
+  const { id } = await params;
+  const costumerId: string = id;
 
-  // Se não houver sessão, não há o que mostrar.
   if (!session?.user.id) {
-    notFound();
+    window.location.href = '/auth/login';
   }
 
-  // Busca o cliente no banco de dados com uma condição de segurança crucial:
-  // O ID do cliente deve corresponder ao da URL E o cliente deve pertencer ao usuário logado.
-  const customer = await prisma.customer.findFirst({
-    where: {
-      id: params.id,
-      createdById: session.user.id
-    }
-  });
+  const customer = await getCustomerById(costumerId);
 
   // Se o cliente não for encontrado (ou não pertencer ao usuário), exibe uma página 404.
   if (!customer) {
     notFound();
   }
+
   return (
     <div className="space-y-8">
-      {/* Cabeçalho da Página */}
       <div>
         <div className="flex items-center space-x-4">
           <div className="flex-shrink-0 bg-gray-200 rounded-full h-16 w-16 flex items-center justify-center">
@@ -50,6 +42,7 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
           <InfoField icon={Phone} label="Telefone" value={customer.phone} />
           <InfoField label="Tipo de Documento" value={customer.documentType} />
           <InfoField label="Número do Documento" value={customer.documentNumber} />
+          <InfoField label="Gênero" value={customer.gender} />
         </dl>
       </div>
 

@@ -50,7 +50,6 @@ export async function createCustomer(customerData: Omit<Customer, 'id'>): Promis
     return null;
   }
 }
-// Futuramente, adicionar outras funções aqui:
 export async function getCustomerById(id: string): Promise<Customer | null> {
   try {
     const requestHeaders = await headers();
@@ -70,5 +69,48 @@ export async function getCustomerById(id: string): Promise<Customer | null> {
     return null;
   }
 }
-// export async function createCustomer(customerData: Omit<Customer, 'id'>) { ... }
-// export async function deleteCustomer(customerId: string) { ... }
+
+export async function updateCustomer(customerId: string, customerData: Partial<Customer>): Promise<Customer | null> {
+  try {
+    const requestHeaders = await headers();
+    const response = await fetch(`${API_BASE_URL}/customers/${customerId}`, {
+      method: 'PUT',
+      headers: {
+        ...requestHeaders,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customerData)
+    });
+
+    if (!response.ok) {
+      console.error('Erro ao atualizar cliente:', response.statusText);
+      throw new Error('Falha ao atualizar o cliente.');
+    }
+
+    const updatedCustomer = await response.json();
+    return updatedCustomer;
+  } catch (error) {
+    console.error('Erro no serviço de atualização de cliente:', error);
+    return null;
+  }
+}
+
+export async function deleteCustomer(customerId: string) {
+  try {
+    const requestHeaders = await headers();
+    const response = await fetch(`${API_BASE_URL}/customers/${customerId}`, {
+      method: 'DELETE',
+      headers: requestHeaders
+    });
+
+    if (!response.ok) {
+      console.error('Erro ao deletar cliente:', response.statusText);
+      throw new Error('Falha ao deletar o cliente.');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erro no serviço de deleção de cliente:', error);
+    return false;
+  }
+}

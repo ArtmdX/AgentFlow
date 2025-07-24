@@ -21,7 +21,7 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
     // 2. Redireciona para a futura página de novo orçamento, passando o ID do cliente
     // router.push(`/travels/new?customerId=${customerId}`);
     console.log(`Criar novo orçamento para o cliente: ${customerId}`);
-    // Descomente a linha acima quando a página de viagens estiver pronta.
+    // Descomentar a linha acima quando a página de viagens estiver pronta.
   };
 
   const handleNewMessageClick = (e: React.MouseEvent, customerPhone: string | null) => {
