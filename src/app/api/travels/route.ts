@@ -26,6 +26,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Campos obrigatórios não foram preenchidos' }, { status: 400 });
     }
 
+    const customer = await prisma.customer.findFirst({
+      where: {
+        id: customerId,
+        createdById: agentId
+      }
+    });
+
+    if (!customer) {
+      return NextResponse.json({ message: 'Cliente não encontrado ou não autorizado' }, { status: 404 });
+    }
+
     const newTravel = await prisma.travel.create({
       data: {
         ...body,

@@ -12,16 +12,13 @@ interface CustomerTableProps {
 export function CustomerTable({ initialCustomers }: CustomerTableProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [customers, setCustomers] = useState(initialCustomers);
-  const router = useRouter(); // Inicializando o router
+  const router = useRouter();
 
   // Função para lidar com o clique no botão de novo orçamento
   const handleNewQuoteClick = (e: React.MouseEvent, customerId: string) => {
     e.stopPropagation();
 
-    // Redireciona para a futura página de novo orçamento, passando o ID do cliente
-    // router.push(`/travels/new?customerId=${customerId}`);
-    console.log(`Criar novo orçamento para o cliente: ${customerId}`);
-    // Descomentar a linha acima quando a página de viagens estiver pronta.
+    router.push(`/dashboard/travels/new?customerId=${customerId}`);
   };
 
   const handleNewMessageClick = (e: React.MouseEvent, customerPhone: string | null) => {
