@@ -67,7 +67,7 @@ model Travel {
   title           String         @db.VarChar(255)
   description     String?
   destination     String         @db.VarChar(255)
-  departureCity   String?        @map("departure_city") @db.VarChar(255)
+  departureCity   String        @map("departure_city") @db.VarChar(255)
   departureDate   DateTime       @map("departure_date") @db.Date
   returnDate      DateTime?      @map("return_date") @db.Date
   createdDate     DateTime?      @default(dbgenerated("CURRENT_DATE")) @map("created_date") @db.Date
