@@ -23,7 +23,7 @@ export function Sidebar() {
         <nav className="space-y-2">
           {navigation.map(item => {
             const Icon = item.icon;
-            const isActive = pathname.startsWith(item.href);
+            const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(item.href);
 
             return (
               <Link
@@ -31,7 +31,7 @@ export function Sidebar() {
                 href={item.href}
                 className={cn(
                   'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                  isActive ? 'bg-primary-100 text-primary-700' : 'text-gray-700 hover:bg-gray-100'
+                  isActive ? 'text-indigo-500 hover:bg-indigo-100' : 'text-gray-700 hover:bg-indigo-100'
                 )}>
                 <Icon className="mr-3 h-5 w-5" />
                 {item.name}
