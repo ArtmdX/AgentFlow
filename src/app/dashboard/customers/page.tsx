@@ -1,4 +1,4 @@
-import { getCustomers } from '@/services/customerService';
+import { getCustomers } from '@/services/customerServerService';
 import { CustomerTable } from '@/components/customers/CustomerTable';
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button'; // Supondo que você tenha um componente de botão

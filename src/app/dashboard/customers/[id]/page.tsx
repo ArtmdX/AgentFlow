@@ -1,14 +1,15 @@
 import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
-import { getCustomerById } from '@/services/customerService';
-import { User, Mail, Phone, MapPin } from 'lucide-react';
+import { getCustomerById } from '@/services/customerServerService';
+import { User, Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
+import { CustomerActions } from '@/components/customers/CustomerActions';
 
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   const { id } = await params;
   const costumerId: string = id;
-  let birthDate: string | null = null;
 
   if (!session?.user.id) {
     window.location.href = '/auth/login';
@@ -16,25 +17,13 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
 
   const customer = await getCustomerById(costumerId);
 
-  // Se o cliente não for encontrado (ou não pertencer ao usuário), exibe uma página 404.
   if (!customer) {
     notFound();
   }
 
-  const isoString = '1990-01-01T00:00:00.000Z';
-  const dateObject = new Date(isoString);
-
-  // ✅ A opção timeZone: 'UTC' força a formatação a usar a data como ela é em UTC.
-  birthDate = dateObject.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    timeZone: 'UTC'
-  });
-
   return (
     <div className="space-y-8">
-      <div>
+      <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex-shrink-0 bg-gray-200 rounded-full h-16 w-16 flex items-center justify-center">
             <User className="h-8 w-8 text-gray-600" />
@@ -44,6 +33,8 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
             <p className="text-gray-600">{customer.email || 'Email não cadastrado'}</p>
           </div>
         </div>
+        {/* Componente com os botões de Editar e Deletar */}
+        <CustomerActions customerId={customer.id} />
       </div>
 
       {/* Card de Informações de Contato e Documentos */}
@@ -55,7 +46,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           <InfoField label="Tipo de Documento" value={customer.documentType} />
           <InfoField label="Número do Documento" value={customer.documentNumber} />
           <InfoField label="Gênero" value={customer.gender} />
-          <InfoField label="Data de Nascimento" value={birthDate} />
+          <InfoField icon={Calendar} label="Data de Nascimento" value={formatDate(customer.birthDate)} />
           <InfoField label="Observações" value={customer.notes} />
         </dl>
       </div>
@@ -97,7 +88,7 @@ function InfoField({
   value: string | null | undefined;
   icon?: React.ElementType;
 }) {
-  if (!value) return null; // Não renderiza nada se o valor não existir
+  if (!value) return null;
 
   return (
     <div className="sm:col-span-1">

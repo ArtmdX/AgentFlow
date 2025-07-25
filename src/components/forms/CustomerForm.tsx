@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { getAddressByCEP } from '@/services/cepService';
 import { Customer } from '@prisma/client';
-import { Textarea } from '../ui/TextArea';
+import { Textarea } from '@/components/ui/TextArea';
+import { CustomerFormData } from '@/types/database';
 
 interface CustomerFormProps {
   onSubmit: (data: Customer) => void;
   isLoading: boolean;
-  initialData?: Partial<Customer>;
+  initialData?: Partial<CustomerFormData>;
   submitButtonText?: string;
   onCancel: () => void;
 }
@@ -27,7 +28,7 @@ export function CustomerForm({
     handleSubmit,
     setValue,
     formState: { errors }
-  } = useForm<Customer>({
+  } = useForm<CustomerFormData>({
     defaultValues: initialData
   });
 
@@ -43,8 +44,16 @@ export function CustomerForm({
     }
   };
 
+  const handleFormSubmit = (data: CustomerFormData) => {
+    const apiData = {
+      ...data,
+      birthDate: data.birthDate ? new Date(data.birthDate) : null
+    };
+    onSubmit(apiData as unknown as Customer);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
       {/* Seção de Dados Obrigatórios */}
       <div className="p-6 bg-white rounded-lg shadow">
         <h3 className="text-lg font-medium leading-6 text-gray-900 border-b pb-4">Dados Obrigatórios</h3>
@@ -113,8 +122,9 @@ export function CustomerForm({
 
           <div className="sm:col-span-1">
             <Select label="Gênero" {...register('gender')}>
-              <option value="H">M</option>
-              <option value="M">F</option>
+              <option value="M">M</option>
+              <option value="F">F</option>
+              <option value="other">Outro</option>
             </Select>
           </div>
 

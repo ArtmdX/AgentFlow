@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Importando o hook de roteamento
-import { MessageCircle, PlusCircle } from 'lucide-react'; // Importando um ícone para o botão
+import { useRouter } from 'next/navigation';
+import { MessageCircle, PlusCircle } from 'lucide-react';
 import { Customer } from '@prisma/client';
 
 interface CustomerTableProps {
@@ -18,7 +18,7 @@ export function CustomerTable({ initialCustomers }: CustomerTableProps) {
   const handleNewQuoteClick = (e: React.MouseEvent, customerId: string) => {
     e.stopPropagation();
 
-    // 2. Redireciona para a futura página de novo orçamento, passando o ID do cliente
+    // Redireciona para a futura página de novo orçamento, passando o ID do cliente
     // router.push(`/travels/new?customerId=${customerId}`);
     console.log(`Criar novo orçamento para o cliente: ${customerId}`);
     // Descomentar a linha acima quando a página de viagens estiver pronta.
