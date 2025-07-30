@@ -47,7 +47,7 @@ export default async function TravelDetailPage({ params }: { params: { id: strin
         <div className="flex justify-between items-center border-b pb-4">
           <h3 className="text-lg font-medium text-gray-900">Cliente Responsável</h3>
           <Link
-            href={`/customers/${customer.id}`}
+            href={`/dashboard/customers/${customer.id}`}
             className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
             Ver perfil completo
           </Link>
