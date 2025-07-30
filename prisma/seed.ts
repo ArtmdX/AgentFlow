@@ -73,6 +73,7 @@ async function main() {
         data: {
           title: `Viagem para ${faker.location.city()}`,
           destination: faker.location.city(),
+          departureCity: faker.location.city(),
           departureDate: departureDate,
           returnDate: faker.date.soon({ days: 10, refDate: departureDate }),
           totalValue: totalValue,
