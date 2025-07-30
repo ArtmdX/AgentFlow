@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Travel } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { createTravel } from '@/services/travelService';
+import { createTravel } from '@/services/travelClientService';
 import { useState } from 'react';
 
 interface TravelFormProps {

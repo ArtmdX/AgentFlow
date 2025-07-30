@@ -1,10 +1,16 @@
-//Lista de viagens
-export default function NomeDaPagina() {
+import { TravelTable } from '@/components/travels/TravelTable';
+import { getTravels } from '@/services/travelServerService';
+
+export default async function TravelsPage() {
+  const travels = await getTravels();
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold">Página em desenvolvimento</h2>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold text-gray-900">Minhas Viagens</h2>
+        <p className="text-gray-600">Gerencie todos os seus orçamentos e viagens confirmadas.</p>
       </div>
+      <TravelTable travels={travels} />
     </div>
   );
 }
