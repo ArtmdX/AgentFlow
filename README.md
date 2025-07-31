@@ -44,8 +44,8 @@ O **AgentFlow** é um CRM desenvolvido especificamente para agências de viagens
 ### Deploy & Infraestrutura
 
 - **Frontend:** Vercel
-- **Database:** Supabase/Railway
-- **Storage:** Vercel Blob (futuro)
+- **Database:** Neon
+- **Storage:** Vercel Blob
 
 ---
 
@@ -78,7 +78,7 @@ npm install
 cp .env.example .env.local
 ```
 
-Edite o `.env.local` com suas configurações:
+Edite o `env.example` com suas configurações:
 
 ```env
 # Database
@@ -165,9 +165,9 @@ Acesse: `http://localhost:3000`
 
 ### 🚧 Fase 2 - Core Features (Em andamento)
 
-- [ ] CRUD de clientes
-- [ ] CRUD de viagens
-- [ ] Dashboard básico
+- [x] CRUD de clientes
+- [x] CRUD de viagens
+- [x] Dashboard básico
 
 ### 📅 Fase 3 - Polish
 

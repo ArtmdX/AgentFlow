@@ -1,42 +1,42 @@
-'use client';
+"use client";
 
-import { Suspense, useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { Suspense, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  const justRegistered = searchParams.get('registered') === 'true';
+  const justRegistered = searchParams.get("registered") === "true";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     const formData = new FormData(event.currentTarget);
 
     try {
-      const result = await signIn('credentials', {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        redirect: false
+      const result = await signIn("credentials", {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        redirect: false,
       });
 
       if (result?.error) {
-        setError('Email ou senha inválidos');
+        setError("Email ou senha inválidos");
         return;
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
       router.refresh();
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      setError('Ocorreu um erro ao fazer login');
+      console.error("Erro ao fazer login:", error);
+      setError("Ocorreu um erro ao fazer login");
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ function LoginForm() {
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="rounded-md shadow-sm space-y-4">
+        <div className="rounded-md space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
@@ -90,7 +90,7 @@ function LoginForm() {
             type="submit"
             disabled={loading}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer">
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? "Entrando..." : "Entrar"}
           </button>
         </div>
       </form>
