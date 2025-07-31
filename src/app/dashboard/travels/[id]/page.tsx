@@ -1,11 +1,11 @@
-import { notFound } from 'next/navigation';
-import { getTravelById } from '@/services/travelServerService';
-import { User, Calendar, MapPin, DollarSign, Info } from 'lucide-react';
-import Link from 'next/link';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { notFound } from "next/navigation";
+import { getTravelById } from "@/services/travelServerService";
+import { User, Calendar, MapPin, DollarSign, Info } from "lucide-react";
+import Link from "next/link";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
-export default async function TravelDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function TravelDetailPage(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   const travel = await getTravelById(id);
 
@@ -73,7 +73,7 @@ function InfoField({
   label,
   value,
   icon: Icon,
-  color = 'text-gray-900'
+  color = "text-gray-900",
 }: {
   label: string;
   value: string | null | undefined;
