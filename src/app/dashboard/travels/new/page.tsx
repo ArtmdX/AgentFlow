@@ -1,15 +1,13 @@
-import { notFound } from 'next/navigation';
-import { getCustomerById } from '@/services/customerServerService';
-import { TravelForm } from '@/components/forms/TravelForm';
+import { notFound } from "next/navigation";
+import { getCustomerById } from "@/services/customerServerService";
+import { TravelForm } from "@/components/forms/TravelForm";
 
-interface NewTravelPageProps {
-  searchParams: {
-    customerId?: string;
-  };
-}
-
-export default async function NewTravelPage({ searchParams }: NewTravelPageProps) {
-  const { customerId } = searchParams;
+export default async function NewTravelPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const customerId = (await searchParams).customerId;
 
   if (!customerId) {
     return (

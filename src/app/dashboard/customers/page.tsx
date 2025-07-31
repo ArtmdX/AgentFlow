@@ -1,11 +1,11 @@
-import { getCustomers } from '@/services/customerServerService';
-import { CustomerTable } from '@/components/customers/CustomerTable';
-import { PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button'; // Supondo que você tenha um componente de botão
-import Link from 'next/link';
+import { getCustomers } from "@/services/customerServerService";
+import { CustomerTable } from "@/components/customers/CustomerTable";
+import { PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/Button"; // Supondo que você tenha um componente de botão
+import Link from "next/link";
 
-// Esta página é um Server Component por padrão no App Router.
-// Por isso podemos torná-la 'async' e usar 'await' diretamente.
+export const dynamic = "force-dynamic";
+
 export default async function CustomersPage() {
   // 1. A chamada da API acontece no servidor, antes da página ser enviada para o browser.
   const customers = await getCustomers();

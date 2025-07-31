@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "docker start agent_flow_db && next dev",
+    "dev:build": "next build",
     "build": "npx prisma generate && npx prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",

@@ -1,5 +1,7 @@
-import { TravelTable } from '@/components/travels/TravelTable';
-import { getTravels } from '@/services/travelServerService';
+import { TravelTable } from "@/components/travels/TravelTable";
+import { getTravels } from "@/services/travelServerService";
+
+export const dynamic = "force-dynamic";
 
 export default async function TravelsPage() {
   const travels = await getTravels();
