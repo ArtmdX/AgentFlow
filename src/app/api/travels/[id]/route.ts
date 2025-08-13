@@ -26,7 +26,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         agentId: userId
       },
       include: {
-        customer: true
+        customer: true,
+        passengers: true
       }
     });
 
@@ -49,8 +50,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
   }
 
-  // const userId = session.user.id;
-
   if (!travelId) {
     return NextResponse.json({ message: 'ID do cliente não fornecido' }, { status: 400 });
   }
@@ -64,8 +63,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   if (!session || !session.user?.id) {
     return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
   }
-
-  // const userId = session.user.id;
 
   if (!travelId) {
     return NextResponse.json({ message: 'ID do cliente não fornecido' }, { status: 400 });

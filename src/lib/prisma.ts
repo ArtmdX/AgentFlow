@@ -1,5 +1,6 @@
 // Cliente Prisma
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { PassengerTypeExtension } from './prisma-extension';
+const prisma = new PrismaClient().$extends(PassengerTypeExtension);
 
 export default prisma;
