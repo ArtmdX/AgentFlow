@@ -13,9 +13,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
 
   const userId = session.user.id;
-
   try {
     const body: Passenger[] = await request.json();
+    console.log(body);
     let newPassengers: Passenger[] = [];
     for (const passenger of body) {
       const { firstName, lastName, documentNumber, documentType, birthDate, gender } = passenger;
@@ -24,17 +24,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ message: 'Campos obrigatórios não foram preenchidos' }, { status: 400 });
       }
 
-      const newPassenger: Passenger = await prisma.passenger.create({
-        data: {
-          ...passenger,
-          agentId: userId,
-          travelId: id,
-          birthDate: new Date(passenger.birthDate)
-        }
-      });
+      const newPassenger: Passenger = {
+        ...passenger,
+        agentId: userId,
+        travelId: id,
+        birthDate: new Date(passenger.birthDate)
+      };
       newPassengers.push(newPassenger);
     }
-    NextResponse.json(newPassengers, { status: 201 });
+    await prisma.passenger.createMany({
+      data: newPassengers
+    });
+    return NextResponse.json(newPassengers, { status: 201 });
   } catch (error) {
     console.error('Erro ao criar orçamento: ', error);
     return NextResponse.json({ message: 'Erro interno do servidor' }, { status: 500 });

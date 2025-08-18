@@ -1,8 +1,10 @@
-import { notFound } from "next/navigation";
-import { getTravelById } from "@/services/travelServerService";
-import { User, Calendar, MapPin, DollarSign, Info } from "lucide-react";
-import Link from "next/link";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { notFound } from 'next/navigation';
+import { getTravelById } from '@/services/travelServerService';
+import { User, Calendar, MapPin, DollarSign, Info } from 'lucide-react';
+import Link from 'next/link';
+import { formatCurrency, formatDate } from '@/lib/utils';
+import prisma from '@/lib/prisma';
+import { PassengersSection } from '@/components/travels/PassengersSection';
 
 export default async function TravelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,6 +14,11 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
   if (!travel) {
     notFound();
   }
+
+  const existingPassengers = await prisma.passenger.findMany({
+    where: { travelId: travel.id },
+    orderBy: { createdAt: 'asc' }
+  });
 
   const { customer } = travel;
 
@@ -59,9 +66,11 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
         </dl>
       </div>
 
-      {/* Espaços futuros para Passageiros e Pagamentos */}
+      <PassengersSection travelId={travel.id} existingPassengers={existingPassengers} />
+
+      {/* Espaço futuro para Pagamentos */}
       <div className="p-4 border-2 border-dashed rounded-lg text-center">
-        <h3 className="text-lg font-medium text-gray-900">Passageiros e Pagamentos</h3>
+        <h3 className="text-lg font-medium text-gray-900">Pagamentos</h3>
         <p className="mt-2 text-sm text-gray-500">(Área para funcionalidades futuras)</p>
       </div>
     </div>
@@ -73,7 +82,7 @@ function InfoField({
   label,
   value,
   icon: Icon,
-  color = "text-gray-900",
+  color = 'text-gray-900'
 }: {
   label: string;
   value: string | null | undefined;
