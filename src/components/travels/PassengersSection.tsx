@@ -46,8 +46,7 @@ export function PassengersSection({ travelId, existingPassengers }: PassengersSe
   const {
     control,
     register,
-    handleSubmit,
-    formState: { errors }
+    handleSubmit
   } = useForm<PassengerFormData>({
     defaultValues: {
       passengers: []
@@ -81,8 +80,8 @@ export function PassengersSection({ travelId, existingPassengers }: PassengersSe
       await createPassengers(travelId, passengersForApi);
       toast.success('Passageiros adicionados com sucesso!');
       router.refresh();
-    } catch (error: any) {
-      setApiError(error.message);
+    } catch (error: unknown) {
+      setApiError(error instanceof Error ? error.message : 'Erro desconhecido');
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,4 @@
-import { passenger_type, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 function calculateAge(birthDate: Date): number {
   const today = new Date();

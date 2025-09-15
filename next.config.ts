@@ -1,7 +1,5 @@
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client']
-  },
+  serverExternalPackages: ['@prisma/client'],
   images: {
     domains: ['localhost']
   }

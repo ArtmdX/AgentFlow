@@ -87,13 +87,14 @@ async function main() {
       await prisma.passenger.create({
         data: {
           travelId: travel.id,
-          agentId: createdAgents[faker.number.int({ min: 0, max: createdAgents.length - 1 })].id,
+          agentId: travel.agentId,
           firstName: customer.firstName,
           lastName: customer.lastName,
           isPrimary: true,
           gender: 'M',
           birthDate: faker.date.birthdate(),
-          documentNumber: faker.string.numeric()
+          documentNumber: faker.string.numeric(),
+          documentType: 'cpf'
         }
       });
 
