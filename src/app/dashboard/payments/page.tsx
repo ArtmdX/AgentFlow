@@ -10,17 +10,10 @@ import Modal from '@/components/ui/Modal';
 import { useConfirmDialog } from '@/components/ui/ConfirmDialog';
 import PaymentForm from '@/components/forms/PaymentForm';
 import { TableSkeleton, CardSkeleton } from '@/components/ui/Loading';
-import { formatPaymentMethod, formatCurrency, deletePayment } from '@/services/paymentService';
+import { formatPaymentMethod, formatCurrency, deletePayment, PaymentWithDetails } from '@/services/paymentService';
 import { toast } from 'react-toastify';
 
-interface PaymentData {
-  id: string;
-  amount: number;
-  currency: string;
-  paymentMethod: string;
-  paymentDate: string;
-  referenceNumber?: string;
-  notes?: string;
+interface PaymentData extends PaymentWithDetails {
   travel: {
     id: string;
     title: string;
@@ -29,10 +22,6 @@ interface PaymentData {
       firstName: string;
       lastName: string;
     };
-  };
-  createdBy: {
-    firstName: string;
-    lastName: string;
   };
 }
 
@@ -122,7 +111,7 @@ export default function PaymentsPage() {
   const confirmDelete = (payment: PaymentData) => {
     openDialog({
       title: 'Excluir Pagamento',
-      message: `Tem certeza que deseja excluir o pagamento de ${formatCurrency(payment.amount, payment.currency)}?`,
+      message: `Tem certeza que deseja excluir o pagamento de ${formatCurrency(Number(payment.amount), payment.currency || 'BRL')}?`,
       variant: 'danger',
       confirmText: 'Excluir',
       onConfirm: () => handleDeletePayment(payment.id)
@@ -340,12 +329,12 @@ export default function PaymentsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                          {formatDate(payment.paymentDate)}
+                          {formatDate(payment.paymentDate.toISOString())}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {formatCurrency(payment.amount, payment.currency)}
+                          {formatCurrency(Number(payment.amount), payment.currency || 'BRL')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

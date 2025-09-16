@@ -17,12 +17,12 @@ type SerializedPassenger = {
   agentId: string;
   firstName: string;
   lastName: string;
-  documentType: document_type;
+  documentType: document_type | null;
   documentNumber: string;
   birthDate: string; // serializado como ISO string
   gender: gender_type;
   isPrimary: boolean | null;
-  createdAt: string | null; // serializado como ISO string
+  createdAt: string | null | undefined; // serializado como ISO string
 };
 
 interface PassengersSectionProps {

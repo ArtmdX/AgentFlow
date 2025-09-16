@@ -2,6 +2,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import { payment_method } from '@prisma/client';
 
 // GET - Listar todos os pagamentos do agente
 export async function GET(request: Request) {
@@ -31,7 +32,7 @@ export async function GET(request: Request) {
         customerId?: string;
       };
       travelId?: string;
-      paymentMethod?: string;
+      paymentMethod?: payment_method;
       paymentDate?: {
         gte?: Date;
         lte?: Date;
@@ -51,7 +52,7 @@ export async function GET(request: Request) {
     }
 
     if (paymentMethod) {
-      where.paymentMethod = paymentMethod;
+      where.paymentMethod = paymentMethod as payment_method;
     }
 
     if (startDate || endDate) {
