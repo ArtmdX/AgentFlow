@@ -1,8 +1,8 @@
 // GET/PUT/DELETE travel
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { NextResponse } from 'next/server';
+import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,34 +10,34 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
-    return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
+    return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
   }
 
   const userId = session.user.id;
 
   if (!travelId) {
-    return NextResponse.json({ message: 'ID do cliente não fornecido' }, { status: 400 });
+    return NextResponse.json({ message: "ID do cliente não fornecido" }, { status: 400 });
   }
 
   try {
     const travel = await prisma.travel.findFirst({
       where: {
         id: travelId,
-        agentId: userId
+        agentId: userId,
       },
       include: {
         customer: true,
-        passengers: true
-      }
+        passengers: true,
+      },
     });
 
     if (!travel) {
-      throw new Error('A viagem não pôde ser encontrada');
+      throw new Error("A viagem não pôde ser encontrada");
     }
     return NextResponse.json(travel);
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
+    return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });
   }
 }
 
@@ -47,13 +47,13 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
-    return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
+    return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
   }
 
   const userId = session.user.id;
 
   if (!travelId) {
-    return NextResponse.json({ message: 'ID da viagem não fornecido' }, { status: 400 });
+    return NextResponse.json({ message: "ID da viagem não fornecido" }, { status: 400 });
   }
 
   try {
@@ -63,12 +63,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const existingTravel = await prisma.travel.findFirst({
       where: {
         id: travelId,
-        agentId: userId
-      }
+        agentId: userId,
+      },
     });
 
     if (!existingTravel) {
-      return NextResponse.json({ message: 'Viagem não encontrada' }, { status: 404 });
+      return NextResponse.json({ message: "Viagem não encontrada" }, { status: 404 });
     }
 
     // Preparar dados para atualização
@@ -94,14 +94,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       data: updateData,
       include: {
         customer: true,
-        passengers: true
-      }
+        passengers: true,
+      },
     });
 
     return NextResponse.json(updatedTravel);
   } catch (error) {
-    console.error('Erro ao atualizar viagem:', error);
-    return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
+    console.error("Erro ao atualizar viagem:", error);
+    return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });
   }
 }
 
@@ -111,13 +111,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
-    return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
+    return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
   }
 
   const userId = session.user.id;
 
   if (!travelId) {
-    return NextResponse.json({ message: 'ID da viagem não fornecido' }, { status: 400 });
+    return NextResponse.json({ message: "ID da viagem não fornecido" }, { status: 400 });
   }
 
   try {
@@ -125,22 +125,22 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const existingTravel = await prisma.travel.findFirst({
       where: {
         id: travelId,
-        agentId: userId
-      }
+        agentId: userId,
+      },
     });
 
     if (!existingTravel) {
-      return NextResponse.json({ message: 'Viagem não encontrada' }, { status: 404 });
+      return NextResponse.json({ message: "Viagem não encontrada" }, { status: 404 });
     }
 
     // Deletar a viagem (cascata irá deletar passengers, activities e payments)
     await prisma.travel.delete({
-      where: { id: travelId }
+      where: { id: travelId },
     });
 
-    return NextResponse.json({ message: 'Viagem deletada com sucesso' }, { status: 200 });
+    return NextResponse.json({ message: "Viagem deletada com sucesso" }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao deletar viagem:', error);
-    return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
+    console.error("Erro ao deletar viagem:", error);
+    return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });
   }
 }

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Users, MapPin, DollarSign, Clock, CheckCircle } from 'lucide-react';
-import { CardSkeleton } from '@/components/ui/Loading';
+import { useState, useEffect } from "react";
+import { Users, MapPin, DollarSign, Clock, CheckCircle } from "lucide-react";
+import { CardSkeleton } from "@/components/ui/Loading";
 
 interface StatsData {
   totalCustomers: number;
@@ -24,14 +24,14 @@ export default function StatsCards() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch("/api/dashboard/stats");
       if (!response.ok) {
-        throw new Error('Erro ao carregar estat�sticas');
+        throw new Error("Erro ao carregar estatísticas");
       }
       const data = await response.json();
       setStats(data.overview);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
@@ -51,10 +51,7 @@ export default function StatsCards() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-600">Erro: {error}</p>
-        <button
-          onClick={fetchStats}
-          className="mt-2 text-sm text-red-700 hover:text-red-900 underline"
-        >
+        <button onClick={fetchStats} className="mt-2 text-sm text-red-700 hover:text-red-900 underline">
           Tentar novamente
         </button>
       </div>
@@ -64,48 +61,48 @@ export default function StatsCards() {
   if (!stats) return null;
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const statsConfig = [
     {
-      title: 'Clientes',
+      title: "Clientes",
       value: stats.totalCustomers,
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
     },
     {
-      title: 'Viagens',
+      title: "Viagens",
       value: stats.totalTravels,
       icon: MapPin,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
-      title: 'Receita Total',
+      title: "Receita Total",
       value: formatCurrency(stats.totalRevenue),
       icon: DollarSign,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
     },
     {
-      title: 'Pendentes',
+      title: "Pendentes",
       value: stats.pendingTravels,
       icon: Clock,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50'
+      color: "text-yellow-600",
+      bgColor: "bg-yellow-50",
     },
     {
-      title: 'Confirmadas',
+      title: "Confirmadas",
       value: stats.confirmedTravels,
       icon: CheckCircle,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50'
-    }
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+    },
   ];
 
   return (

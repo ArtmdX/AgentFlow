@@ -28,3 +28,24 @@ export const travelUpdateSchema = z.object({
   notes: z.string().optional(),
   internalNotes: z.string().optional()
 });
+
+// Validação para criação de pagamento
+export const paymentCreateSchema = z.object({
+  travelId: z.string().uuid('ID da viagem inválido'),
+  amount: z.number().positive('Valor deve ser positivo'),
+  currency: z.enum(['BRL', 'USD', 'EUR', 'ARS']).default('BRL'),
+  paymentMethod: z.enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'check']),
+  paymentDate: z.string().min(1, 'Data do pagamento é obrigatória'),
+  referenceNumber: z.string().optional(),
+  notes: z.string().optional()
+});
+
+// Validação para atualização de pagamento
+export const paymentUpdateSchema = z.object({
+  amount: z.number().positive('Valor deve ser positivo').optional(),
+  currency: z.enum(['BRL', 'USD', 'EUR', 'ARS']).optional(),
+  paymentMethod: z.enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'check']).optional(),
+  paymentDate: z.string().optional(),
+  referenceNumber: z.string().optional(),
+  notes: z.string().optional()
+});

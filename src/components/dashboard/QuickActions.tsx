@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, MapPin, Calculator } from "lucide-react";
+import { Users, MapPin, Calculator, CreditCard } from "lucide-react";
 
 export default function QuickActions() {
   const actions = [
@@ -18,10 +18,10 @@ export default function QuickActions() {
       color: "bg-green-500 hover:bg-green-600",
     },
     {
-      title: "Ver Clientes",
-      description: "Gerenciar clientes existentes",
-      href: "/dashboard/customers",
-      icon: Users,
+      title: "Ver Pagamentos",
+      description: "Gerenciar todos os pagamentos",
+      href: "/dashboard/payments",
+      icon: CreditCard,
       color: "bg-purple-500 hover:bg-purple-600",
     },
     {

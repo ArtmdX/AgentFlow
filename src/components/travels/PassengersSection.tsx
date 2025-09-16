@@ -1,7 +1,7 @@
 'use client';
 
 import { useFieldArray, useForm } from 'react-hook-form';
-import { document_type, gender_type, Passenger } from '@prisma/client';
+import { document_type, gender_type } from '@prisma/client';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { createPassengers } from '@/services/passengerService';
@@ -10,9 +10,24 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
+// Tipo para passageiros serializados vindos do servidor
+type SerializedPassenger = {
+  id: string;
+  travelId: string;
+  agentId: string;
+  firstName: string;
+  lastName: string;
+  documentType: document_type;
+  documentNumber: string;
+  birthDate: string; // serializado como ISO string
+  gender: gender_type;
+  isPrimary: boolean | null;
+  createdAt: string | null; // serializado como ISO string
+};
+
 interface PassengersSectionProps {
   travelId: string;
-  existingPassengers: Passenger[];
+  existingPassengers: SerializedPassenger[];
 }
 
 // MUDANÇA 1: O tipo do formulário reflete a realidade dos inputs (data como string)

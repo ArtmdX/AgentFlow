@@ -1,10 +1,12 @@
-import { notFound } from 'next/navigation';
-import { getTravelById } from '@/services/travelServerService';
-import { User, Calendar, MapPin, DollarSign, Info } from 'lucide-react';
-import Link from 'next/link';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import prisma from '@/lib/prisma';
-import { PassengersSection } from '@/components/travels/PassengersSection';
+import { notFound } from "next/navigation";
+import { getTravelById } from "@/services/travelServerService";
+import { User, Calendar, MapPin, DollarSign, Info } from "lucide-react";
+import Link from "next/link";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import prisma from "@/lib/prisma";
+import { PassengersSection } from "@/components/travels/PassengersSection";
+import PaymentsList from "@/components/payments/PaymentsList";
+import PaymentTimeline from "@/components/payments/PaymentTimeline";
 
 export default async function TravelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,10 +17,25 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
     notFound();
   }
 
-  const existingPassengers = await prisma.passenger.findMany({
+  const rawPassengers = await prisma.passenger.findMany({
     where: { travelId: travel.id },
-    orderBy: { createdAt: 'asc' }
+    orderBy: { createdAt: "asc" },
   });
+
+  // Serializar os dados para remover propriedades symbol
+  const existingPassengers = rawPassengers.map((passenger) => ({
+    id: passenger.id,
+    travelId: passenger.travelId,
+    agentId: passenger.agentId,
+    firstName: passenger.firstName,
+    lastName: passenger.lastName,
+    documentType: passenger.documentType,
+    documentNumber: passenger.documentNumber,
+    birthDate: passenger.birthDate.toISOString(),
+    gender: passenger.gender,
+    isPrimary: passenger.isPrimary,
+    createdAt: passenger.createdAt?.toISOString(),
+  }));
 
   const { customer } = travel;
 
@@ -38,11 +55,11 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
           <InfoField icon={Calendar} label="Data de Partida" value={formatDate(travel.departureDate)} />
           <InfoField icon={Calendar} label="Data de Retorno" value={formatDate(travel.returnDate)} />
           <InfoField icon={MapPin} label="Cidade de Partida" value={travel.departureCity} />
-          <InfoField icon={DollarSign} label="Valor Total" value={formatCurrency(travel.totalValue)} />
+          <InfoField icon={DollarSign} label="Valor Total" value={formatCurrency(Number(travel.totalValue) || 0)} />
           <InfoField
             icon={DollarSign}
             label="Valor Pago"
-            value={formatCurrency(travel.paidValue)}
+            value={formatCurrency(Number(travel.paidValue) || 0)}
             color="text-green-600"
           />
           <InfoField icon={Info} label="Status" value={travel.status} />
@@ -68,10 +85,14 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
 
       <PassengersSection travelId={travel.id} existingPassengers={existingPassengers} />
 
-      {/* Espaço futuro para Pagamentos */}
-      <div className="p-4 border-2 border-dashed rounded-lg text-center">
-        <h3 className="text-lg font-medium text-gray-900">Pagamentos</h3>
-        <p className="mt-2 text-sm text-gray-500">(Área para funcionalidades futuras)</p>
+      {/* Sistema de Pagamentos */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <PaymentsList travelId={travel.id} totalValue={Number(travel.totalValue) || 0} />
+        </div>
+        <div className="lg:col-span-1">
+          <PaymentTimeline travelId={travel.id} />
+        </div>
       </div>
     </div>
   );
@@ -82,7 +103,7 @@ function InfoField({
   label,
   value,
   icon: Icon,
-  color = 'text-gray-900'
+  color = "text-gray-900",
 }: {
   label: string;
   value: string | null | undefined;

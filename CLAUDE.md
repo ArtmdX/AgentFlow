@@ -64,6 +64,9 @@ RESTful API routes in `/src/app/api/`:
 - `/api/customers` - Customer CRUD operations
 - `/api/travels` - Travel CRUD operations
 - `/api/travels/[id]/passengers` - Passenger management
+- `/api/travels/[id]/payments` - Travel-specific payment management
+- `/api/payments` - Global payment operations and statistics
+- `/api/payments/[id]` - Individual payment CRUD
 - `/api/dashboard/stats` - Dashboard statistics
 - `/api/auth/[...nextauth]` - NextAuth endpoints
 
@@ -97,3 +100,55 @@ Uses react-hook-form with Zod schemas for type-safe form validation. Validation 
 - Primary color: Blue (#3B82F6)
 - Custom design tokens in `tailwind.config.ts`
 - Responsive design patterns throughout components
+
+## Payment System
+
+The application includes a complete payment management system:
+
+### Features
+- **Payment CRUD Operations**: Create, read, update, delete payments
+- **Travel Integration**: Payments linked to specific travels
+- **Multiple Currencies**: Support for BRL, USD, EUR, ARS
+- **Payment Methods**: Cash, credit/debit cards, bank transfer, PIX, check
+- **Automatic Calculations**: Travel status updates based on payment amounts
+- **Statistics Dashboard**: Payment analytics and reporting
+
+### Key Components
+- `PaymentForm` - Form for creating/editing payments
+- `PaymentsList` - Payment management interface with CRUD operations
+- `PaymentTimeline` - Historical timeline of payments
+- `PaymentsPage` - Dedicated payments dashboard with filtering
+
+### Payment Validation
+Payment forms use Zod schemas for validation:
+- Amount must be positive
+- Date validation
+- Currency and method validation
+- Reference number (optional)
+
+## Common Issues & Solutions
+
+### Prisma Decimal Serialization
+When passing Prisma data from Server to Client Components:
+- **Problem**: Decimal fields lose `.toNumber()` method when serialized to JSON
+- **Solution**: Use `Number(value)` instead of `value.toNumber()` in Client Components
+- **Affected Fields**: `totalValue`, `paidValue`, `amount` in payment data
+
+### Component Props Serialization
+When passing Prisma objects to Client Components:
+- **Problem**: Objects with symbol properties cause serialization errors
+- **Solution**: Manually serialize objects, converting Dates to ISO strings
+- **Example**: Convert `passengers` data before passing to `PassengersSection`
+
+### Database Migrations
+Important migration commands:
+- `npx prisma migrate reset --force` - Reset and apply all migrations
+- `npx prisma migrate status` - Check migration status
+- `npx prisma migrate deploy` - Apply pending migrations (production)
+
+## Development Workflow
+
+1. **Always run migrations**: Ensure database schema is up to date
+2. **Check lint**: Run `npm run lint` before committing
+3. **Test builds**: Verify `npm run build` works without errors
+4. **Serialize data**: Convert Prisma objects before passing to Client Components

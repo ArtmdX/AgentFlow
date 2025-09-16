@@ -176,7 +176,7 @@ export default function RecentTravels() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{formatCurrency(travel.totalValue)}</div>
+                    <div className="text-sm font-medium text-gray-900">{formatCurrency(Number(travel.totalValue) || 0)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link href={`/dashboard/travels/${travel.id}`} className="text-primary-600 hover:text-primary-900">
