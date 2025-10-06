@@ -1,10 +1,20 @@
 import { Customer } from "@prisma/client";
 import { headers } from "next/headers";
 
-// URL base da sua API. É uma boa prática usar variáveis de ambiente.
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export async function getCustomers(): Promise<Customer[]> {
+export interface CustomerStats {
+  totalCustomers: number;
+  totalTravels: number;
+  totalRevenue: number;
+}
+
+export interface CustomersWithStats {
+  customers: Customer[];
+  stats: CustomerStats;
+}
+
+export async function getCustomers(): Promise<CustomersWithStats> {
   try {
     const requestHeaders = await headers();
     const response = await fetch(`${API_BASE_URL}/customers`, {
@@ -21,7 +31,14 @@ export async function getCustomers(): Promise<Customer[]> {
     return data;
   } catch (error) {
     console.error("Erro no serviço de clientes:", error);
-    return [];
+    return {
+      customers: [],
+      stats: {
+        totalCustomers: 0,
+        totalTravels: 0,
+        totalRevenue: 0,
+      },
+    };
   }
 }
 

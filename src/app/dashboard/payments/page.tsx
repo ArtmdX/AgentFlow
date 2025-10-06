@@ -329,7 +329,7 @@ export default function PaymentsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                          {formatDate(typeof payment.paymentDate === 'string' ? payment.paymentDate : payment.paymentDate.toISOString())}
+                          {formatDate(new Date(payment.paymentDate))}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

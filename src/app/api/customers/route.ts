@@ -16,11 +16,37 @@ export async function GET() {
   const userId = session.user.id;
 
   try {
-    const customers = await prisma.customer.findMany({
-      where: { createdById: userId, isActive: true },
-      orderBy: { createdAt: 'desc' }
-    });
-    return NextResponse.json(customers, { status: 200 });
+    const [customers, totalCustomers, totalTravels, totalRevenue] = await Promise.all([
+      prisma.customer.findMany({
+        where: { createdById: userId, isActive: true },
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.customer.count({
+        where: { createdById: userId, isActive: true }
+      }),
+      prisma.travel.count({
+        where: { agentId: userId }
+      }),
+      prisma.payment.aggregate({
+        where: {
+          travel: {
+            agentId: userId
+          }
+        },
+        _sum: {
+          amount: true
+        }
+      })
+    ]);
+
+    return NextResponse.json({
+      customers,
+      stats: {
+        totalCustomers,
+        totalTravels,
+        totalRevenue: totalRevenue._sum.amount?.toNumber() || 0
+      }
+    }, { status: 200 });
   } catch (error) {
     console.error('Erro ao buscar clientes:', error);
     return NextResponse.json({ message: 'Erro interno do servidor' }, { status: 500 });

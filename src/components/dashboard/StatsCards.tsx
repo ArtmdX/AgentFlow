@@ -115,9 +115,9 @@ export default function StatsCards() {
               <div className={`p-2 rounded-lg ${stat.bgColor}`}>
                 <Icon className={`h-6 w-6 ${stat.color}`} />
               </div>
-              <div className="ml-4">
+              <div className="ml-4 min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-xl font-bold text-gray-900">{stat.value}</p>
               </div>
             </div>
           </div>

@@ -107,15 +107,37 @@ export function PassengersSection({ travelId, existingPassengers }: PassengersSe
       <h3 className="text-lg font-medium border-b pb-4 text-gray-900">Passageiros</h3>
 
       {existingPassengers.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-600">Passageiros já cadastrados:</h4>
-          <ul className="list-disc pl-5 text-gray-800">
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700">Passageiros já cadastrados:</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {existingPassengers.map(p => (
-              <li key={p.id}>
-                {p.firstName} {p.lastName}
-              </li>
+              <div key={p.id} className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900">
+                      {p.firstName} {p.lastName}
+                    </p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Doc:</span> {p.documentType?.toUpperCase()} - {p.documentNumber}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Nascimento:</span> {new Date(p.birthDate).toLocaleDateString('pt-BR')}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Gênero:</span> {p.gender === 'M' ? 'Masculino' : 'Feminino'}
+                      </p>
+                    </div>
+                  </div>
+                  {p.isPrimary && (
+                    <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                      Principal
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 

@@ -1,0 +1,13 @@
+tela de dashboard/travels/:id
+Melhorar UI De passageiros ja cadastrados.
+Status vindo em snake_case(igual ao banco de dados)
+Mostrar também a cidade de destino
+
+
+
+Tela de dashboard/customers
+Adicionar alguns cards de métricas
+
+
+Tela de dashboard
+Card de receita total com valor vazando do card

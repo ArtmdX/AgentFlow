@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTravelById } from "@/services/travelServerService";
 import { User, Calendar, MapPin, DollarSign, Info } from "lucide-react";
 import Link from "next/link";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, formatTravelStatus } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { PassengersSection } from "@/components/travels/PassengersSection";
 import PaymentsList from "@/components/payments/PaymentsList";
@@ -55,6 +55,7 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
           <InfoField icon={Calendar} label="Data de Partida" value={formatDate(travel.departureDate)} />
           <InfoField icon={Calendar} label="Data de Retorno" value={formatDate(travel.returnDate)} />
           <InfoField icon={MapPin} label="Cidade de Partida" value={travel.departureCity} />
+          <InfoField icon={MapPin} label="Destino" value={travel.destination} />
           <InfoField icon={DollarSign} label="Valor Total" value={formatCurrency(Number(travel.totalValue) || 0)} />
           <InfoField
             icon={DollarSign}
@@ -62,7 +63,7 @@ export default async function TravelDetailPage({ params }: { params: Promise<{ i
             value={formatCurrency(Number(travel.paidValue) || 0)}
             color="text-green-600"
           />
-          <InfoField icon={Info} label="Status" value={travel.status} />
+          <InfoField icon={Info} label="Status" value={formatTravelStatus(travel.status)} />
         </dl>
       </div>
 

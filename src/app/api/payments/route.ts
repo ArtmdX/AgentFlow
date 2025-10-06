@@ -66,7 +66,7 @@ export async function GET(request: Request) {
     }
 
     // Buscar pagamentos com paginação
-    const [payments, total] = await Promise.all([
+    const [rawPayments, total] = await Promise.all([
       prisma.payment.findMany({
         where,
         include: {
@@ -98,6 +98,15 @@ export async function GET(request: Request) {
       }),
       prisma.payment.count({ where })
     ]);
+
+    // Serializar datas para evitar erros no cliente
+    const payments = rawPayments.map(payment => ({
+      ...payment,
+      paymentDate: payment.paymentDate.toISOString(),
+      amount: payment.amount.toNumber(),
+      createdAt: payment.createdAt?.toISOString(),
+      updatedAt: payment.updatedAt?.toISOString()
+    }));
 
     // Calcular estatísticas
     const stats = await prisma.payment.aggregate({
