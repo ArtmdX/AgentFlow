@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, CreditCard, Calendar, User } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import { useConfirmDialog } from '@/components/ui/ConfirmDialog';
-import PaymentForm from '@/components/forms/PaymentForm';
-import { TableSkeleton } from '@/components/ui/Loading';
+import { useState, useEffect } from "react";
+import { Plus, Edit, Trash2, CreditCard, Calendar, User } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
+import PaymentForm from "@/components/forms/PaymentForm";
+import { TableSkeleton } from "@/components/ui/Loading";
 import {
   getPaymentsByTravel,
   deletePayment,
   PaymentWithDetails,
   formatPaymentMethod,
-  formatCurrency
-} from '@/services/paymentService';
-import { toast } from 'react-toastify';
+  formatCurrency,
+} from "@/services/paymentService";
+import { toast } from "react-toastify";
 
 interface PaymentsListProps {
   travelId: string;
@@ -38,7 +38,7 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
       const data = await getPaymentsByTravel(travelId);
       setPayments(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar pagamentos');
+      setError(err instanceof Error ? err.message : "Erro ao carregar pagamentos");
     } finally {
       setLoading(false);
     }
@@ -59,26 +59,29 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
   const handleDeletePayment = async (paymentId: string) => {
     try {
       await deletePayment(paymentId);
-      toast.success('Pagamento excluído com sucesso!');
+      toast.success("Pagamento excluído com sucesso!");
       loadPayments();
       onPaymentChange?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Erro ao excluir pagamento');
+      toast.error(error instanceof Error ? error.message : "Erro ao excluir pagamento");
     }
   };
 
   const confirmDelete = (payment: PaymentWithDetails) => {
     openDialog({
-      title: 'Excluir Pagamento',
-      message: `Tem certeza que deseja excluir o pagamento de ${formatCurrency(Number(payment.amount), payment.currency || 'BRL')}?`,
-      variant: 'danger',
-      confirmText: 'Excluir',
-      onConfirm: () => handleDeletePayment(payment.id)
+      title: "Excluir Pagamento",
+      message: `Tem certeza que deseja excluir o pagamento de ${formatCurrency(
+        Number(payment.amount),
+        payment.currency || "BRL"
+      )}?`,
+      variant: "danger",
+      confirmText: "Excluir",
+      onConfirm: () => handleDeletePayment(payment.id),
     });
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('pt-BR');
+    return new Date(date).toLocaleDateString("pt-BR");
   };
 
   // Cálculos
@@ -108,10 +111,7 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
         <div className="p-6">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-600">Erro: {error}</p>
-            <button
-              onClick={loadPayments}
-              className="mt-2 text-sm text-red-700 hover:text-red-900 underline"
-            >
+            <button onClick={loadPayments} className="mt-2 text-sm text-red-700 hover:text-red-900 underline">
               Tentar novamente
             </button>
           </div>
@@ -125,11 +125,7 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
       <div className="bg-white rounded-lg shadow">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h3 className="text-lg font-medium text-gray-900">Pagamentos</h3>
-          <Button
-            size="sm"
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2"
-          >
+          <Button size="sm" onClick={() => setShowAddModal(true)} className="flex items-center space-x-2">
             <Plus className="h-4 w-4" />
             <span>Adicionar Pagamento</span>
           </Button>
@@ -140,19 +136,15 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-600">Total da Viagem</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {formatCurrency(totalValue)}
-              </p>
+              <p className="text-lg font-semibold text-gray-900">{formatCurrency(totalValue)}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Pago</p>
-              <p className="text-lg font-semibold text-green-600">
-                {formatCurrency(totalPaid)}
-              </p>
+              <p className="text-lg font-semibold text-green-600">{formatCurrency(totalPaid)}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Saldo Devedor</p>
-              <p className={`text-lg font-semibold ${remainingValue <= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`text-lg font-semibold ${remainingValue <= 0 ? "text-green-600" : "text-red-600"}`}>
                 {formatCurrency(remainingValue)}
               </p>
             </div>
@@ -167,7 +159,7 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  paymentPercentage >= 100 ? 'bg-green-500' : 'bg-blue-500'
+                  paymentPercentage >= 100 ? "bg-green-500" : "bg-blue-500"
                 }`}
                 style={{ width: `${Math.min(paymentPercentage, 100)}%` }}
               />
@@ -181,10 +173,7 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
             <div className="text-center py-8">
               <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">Nenhum pagamento registrado</p>
-              <Button
-                onClick={() => setShowAddModal(true)}
-                variant="outline"
-              >
+              <Button onClick={() => setShowAddModal(true)} variant="outline">
                 Registrar Primeiro Pagamento
               </Button>
             </div>
@@ -224,23 +213,15 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {formatCurrency(Number(payment.amount), payment.currency || 'BRL')}
+                          {formatCurrency(Number(payment.amount), payment.currency || "BRL")}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {formatPaymentMethod(payment.paymentMethod)}
-                        </div>
+                        <div className="text-sm text-gray-900">{formatPaymentMethod(payment.paymentMethod)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {payment.referenceNumber || '-'}
-                        </div>
-                        {payment.notes && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            {payment.notes}
-                          </div>
-                        )}
+                        <div className="text-sm text-gray-900">{payment.referenceNumber || "-"}</div>
+                        {payment.notes && <div className="text-xs text-gray-500 mt-1">{payment.notes}</div>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
@@ -253,15 +234,13 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
                           <button
                             onClick={() => setEditingPayment(payment)}
                             className="text-blue-600 hover:text-blue-900"
-                            title="Editar"
-                          >
+                            title="Editar">
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => confirmDelete(payment)}
                             className="text-red-600 hover:text-red-900"
-                            title="Excluir"
-                          >
+                            title="Excluir">
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
@@ -276,26 +255,12 @@ export default function PaymentsList({ travelId, totalValue, onPaymentChange }: 
       </div>
 
       {/* Modal de Adicionar Pagamento */}
-      <Modal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="Registrar Pagamento"
-        size="lg"
-      >
-        <PaymentForm
-          travelId={travelId}
-          onSuccess={handlePaymentSuccess}
-          onCancel={() => setShowAddModal(false)}
-        />
+      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Registrar Pagamento" size="lg">
+        <PaymentForm travelId={travelId} onSuccess={handlePaymentSuccess} onCancel={() => setShowAddModal(false)} />
       </Modal>
 
       {/* Modal de Editar Pagamento */}
-      <Modal
-        isOpen={!!editingPayment}
-        onClose={() => setEditingPayment(null)}
-        title="Editar Pagamento"
-        size="lg"
-      >
+      <Modal isOpen={!!editingPayment} onClose={() => setEditingPayment(null)} title="Editar Pagamento" size="lg">
         {editingPayment && (
           <PaymentForm
             travelId={travelId}

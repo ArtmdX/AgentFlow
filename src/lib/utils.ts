@@ -35,11 +35,30 @@ export function formatTravelStatus(status: string): string {
   };
   return statusMap[status] || status;
 }
-/*
-  orcamento
-  aguardando_pagamento
-  confirmada
-  em_andamento
-  finalizada
-  cancelada
-*/
+
+/**
+ * Remove propriedades undefined ou strings vazias de um objeto
+ */
+export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (value !== undefined && value !== '') {
+      (acc as Record<string, unknown>)[key] = value;
+    }
+    return acc;
+  }, {} as Partial<T>);
+}
+
+/**
+ * Converte um objeto em URLSearchParams, removendo valores vazios
+ */
+export function objectToSearchParams(obj: Record<string, unknown>): URLSearchParams {
+  const params = new URLSearchParams();
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.set(key, String(value));
+    }
+  });
+
+  return params;
+}

@@ -5,17 +5,91 @@ import { Travel } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user.id) {
     return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
   }
 
   const agentId = session.user.id;
+  const { searchParams } = new URL(request.url);
+
+  // Extrair parâmetros de filtro
+  const status = searchParams.get('status');
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
+  const destination = searchParams.get('destination');
+  const customer = searchParams.get('customer');
+  const sortBy = searchParams.get('sortBy') || 'departureDate';
+  const sortOrder = searchParams.get('sortOrder') || 'desc';
 
   try {
+    // Construir objeto where dinamicamente
+    const where: {
+      agentId: string;
+      status?: string;
+      departureDate?: {
+        gte?: Date;
+        lte?: Date;
+      };
+      destination?: {
+        contains: string;
+        mode: 'insensitive';
+      };
+      customer?: {
+        OR: Array<{
+          firstName?: { contains: string; mode: 'insensitive' };
+          lastName?: { contains: string; mode: 'insensitive' };
+        }>;
+      };
+    } = {
+      agentId: agentId
+    };
+
+    // Filtro de status
+    if (status) {
+      where.status = status;
+    }
+
+    // Filtro de data
+    if (startDate || endDate) {
+      where.departureDate = {};
+      if (startDate) {
+        where.departureDate.gte = new Date(startDate);
+      }
+      if (endDate) {
+        where.departureDate.lte = new Date(endDate);
+      }
+    }
+
+    // Filtro de destino
+    if (destination) {
+      where.destination = {
+        contains: destination,
+        mode: 'insensitive'
+      };
+    }
+
+    // Filtro de cliente
+    if (customer) {
+      where.customer = {
+        OR: [
+          { firstName: { contains: customer, mode: 'insensitive' } },
+          { lastName: { contains: customer, mode: 'insensitive' } }
+        ]
+      };
+    }
+
+    // Construir ordenação
+    const orderBy: Record<string, 'asc' | 'desc'> = {};
+    if (sortBy === 'customer') {
+      orderBy['customer'] = { firstName: sortOrder as 'asc' | 'desc' };
+    } else {
+      orderBy[sortBy] = sortOrder as 'asc' | 'desc';
+    }
+
     const travels = await prisma.travel.findMany({
-      where: { agentId: agentId },
+      where,
       include: {
         customer: {
           select: {
@@ -24,9 +98,9 @@ export async function GET() {
           }
         }
       },
-      orderBy: { departureDate: 'asc' }
+      orderBy: sortBy === 'customer' ? { customer: { firstName: sortOrder as 'asc' | 'desc' } } : { [sortBy]: sortOrder as 'asc' | 'desc' }
     });
-    if (!travels) return NextResponse.json({ message: 'Não foi possível encontrar viagens' }, { status: 500 });
+
     return NextResponse.json(travels);
   } catch (error) {
     console.error('Erro ao buscar viagens:', error);

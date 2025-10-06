@@ -1,16 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Prisma } from '@prisma/client';
 import { PlaneTakeoff, ShieldAlert, CircleCheck, Hourglass, XCircle, HandCoins } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { TableSkeleton } from '@/components/ui/Loading';
 
 type TravelWithCustomer = Prisma.TravelGetPayload<{
   include: { customer: { select: { firstName: true; lastName: true } } };
 }>;
 
 interface TravelTableProps {
-  travels: TravelWithCustomer[];
+  queryParams?: URLSearchParams;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -38,8 +40,52 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-export function TravelTable({ travels }: TravelTableProps) {
+export function TravelTable({ queryParams }: TravelTableProps) {
   const router = useRouter();
+  const [travels, setTravels] = useState<TravelWithCustomer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTravels = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const params = queryParams?.toString() || '';
+        const response = await fetch(`/api/travels${params ? `?${params}` : ''}`);
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar viagens');
+        }
+
+        const data = await response.json();
+        setTravels(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTravels();
+  }, [queryParams]);
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <TableSkeleton rows={5} cols={4} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <p className="text-red-600">Erro: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow overflow-x-auto">
