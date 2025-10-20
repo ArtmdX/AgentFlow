@@ -1,7 +1,7 @@
 // GET/POST travels
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Travel } from '@prisma/client';
+import { Travel, travel_status } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     // Construir objeto where dinamicamente
     const where: {
       agentId: string;
-      status?: string;
+      status?: travel_status;
       departureDate?: {
         gte?: Date;
         lte?: Date;
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
 
     // Filtro de status
     if (status) {
-      where.status = status;
+      where.status = status as travel_status;
     }
 
     // Filtro de data
@@ -81,9 +81,9 @@ export async function GET(request: Request) {
     }
 
     // Construir ordenação
-    const orderBy: Record<string, 'asc' | 'desc'> = {};
+    let orderBy: Record<string, unknown> = {};
     if (sortBy === 'customer') {
-      orderBy['customer'] = { firstName: sortOrder as 'asc' | 'desc' };
+      orderBy = { customer: { firstName: sortOrder as 'asc' | 'desc' } };
     } else {
       orderBy[sortBy] = sortOrder as 'asc' | 'desc';
     }

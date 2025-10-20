@@ -13,7 +13,7 @@ export function formatCurrency(value: number, currency = "BRL") {
   }).format(value);
 }
 
-export function formatDate(date: Date | null | undefined): string | null {
+export function formatDate(date: Date | string | null | undefined): string | null {
   if (!date) return null;
   return new Date(date).toLocaleDateString("pt-BR", {
     day: "2-digit",

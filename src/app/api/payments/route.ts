@@ -103,9 +103,7 @@ export async function GET(request: Request) {
     const payments = rawPayments.map(payment => ({
       ...payment,
       paymentDate: payment.paymentDate.toISOString(),
-      amount: payment.amount.toNumber(),
-      createdAt: payment.createdAt?.toISOString(),
-      updatedAt: payment.updatedAt?.toISOString()
+      amount: payment.amount.toNumber()
     }));
 
     // Calcular estatísticas

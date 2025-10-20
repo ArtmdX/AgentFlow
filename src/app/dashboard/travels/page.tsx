@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TravelTable } from "@/components/travels/TravelTable";
 import TravelFilters, { TravelFiltersState } from "@/components/travels/TravelFilters";
@@ -8,7 +8,7 @@ import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
-export default function TravelsPage() {
+function TravelsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -89,5 +89,13 @@ export default function TravelsPage() {
 
       <TravelTable queryParams={queryParams} />
     </div>
+  );
+}
+
+export default function TravelsPage() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <TravelsPageContent />
+    </Suspense>
   );
 }

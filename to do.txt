@@ -1,13 +1,3 @@
-tela de dashboard/travels/:id
-Melhorar UI De passageiros ja cadastrados.
-Status vindo em snake_case(igual ao banco de dados)
-Mostrar também a cidade de destino
+Tirar botão de criar viagem 
 
-
-
-Tela de dashboard/customers
-Adicionar alguns cards de métricas
-
-
-Tela de dashboard
-Card de receita total com valor vazando do card
+Adicionar campo para cidade de origem no formulário de nova viagem

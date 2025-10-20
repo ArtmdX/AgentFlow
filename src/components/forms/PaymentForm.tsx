@@ -40,9 +40,9 @@ export default function PaymentForm({ travelId, payment, onSuccess, onCancel }: 
       amount: Number(payment.amount),
       currency: payment.currency || 'BRL',
       paymentMethod: payment.paymentMethod,
-      paymentDate: typeof payment.paymentDate === 'string'
-        ? payment.paymentDate.split('T')[0]
-        : payment.paymentDate.toISOString().split('T')[0],
+      paymentDate: (payment.paymentDate instanceof Date
+        ? payment.paymentDate.toISOString()
+        : payment.paymentDate).split('T')[0],
       referenceNumber: payment.referenceNumber || '',
       notes: payment.notes || ''
     } : {

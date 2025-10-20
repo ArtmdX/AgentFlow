@@ -13,7 +13,8 @@ import { TableSkeleton, CardSkeleton } from '@/components/ui/Loading';
 import { formatPaymentMethod, formatCurrency, deletePayment, PaymentWithDetails } from '@/services/paymentService';
 import { toast } from 'react-toastify';
 
-interface PaymentData extends PaymentWithDetails {
+interface PaymentData extends Omit<PaymentWithDetails, 'paymentDate'> {
+  paymentDate: string;
   travel: {
     id: string;
     title: string;
@@ -329,7 +330,7 @@ export default function PaymentsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                          {formatDate(new Date(payment.paymentDate))}
+                          {formatDate(payment.paymentDate)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -436,7 +437,7 @@ export default function PaymentsPage() {
         {editingPayment && (
           <PaymentForm
             travelId={editingPayment.travel.id}
-            payment={editingPayment}
+            payment={editingPayment as unknown as PaymentWithDetails}
             onSuccess={() => {
               setEditingPayment(null);
               loadPayments();
