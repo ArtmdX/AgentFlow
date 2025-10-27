@@ -1,7 +1,8 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
+import { CityAutocomplete } from '@/components/ui/CityAutocomplete';
 import { Travel } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { createTravel } from '@/services/travelClientService';
@@ -22,6 +23,7 @@ export function TravelForm({ customerId }: TravelFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors }
   } = useForm<TravelFormData>();
   const [apiError, setApiError] = useState<string | null>(null);
@@ -60,11 +62,38 @@ export function TravelForm({ customerId }: TravelFormProps) {
               error={errors.title?.message}
             />
           </div>
-          <div className="sm:col-span-2">
-            <Input
-              label="Destino *"
-              {...register('destination', { required: 'Destino é obrigatório' })}
-              error={errors.destination?.message}
+          <div className="sm:col-span-1">
+            <Controller
+              name="departureCity"
+              control={control}
+              rules={{ required: 'Cidade de partida é obrigatória' }}
+              render={({ field }) => (
+                <CityAutocomplete
+                  label="Cidade de Partida *"
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={errors.departureCity?.message}
+                  placeholder="Ex: GRU - São Paulo/SP"
+                  required
+                />
+              )}
+            />
+          </div>
+          <div className="sm:col-span-1">
+            <Controller
+              name="destination"
+              control={control}
+              rules={{ required: 'Cidade de destino é obrigatória' }}
+              render={({ field }) => (
+                <CityAutocomplete
+                  label="Cidade de Destino *"
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={errors.destination?.message}
+                  placeholder="Ex: GIG - Rio de Janeiro/RJ"
+                  required
+                />
+              )}
             />
           </div>
           <div className="sm:col-span-1">

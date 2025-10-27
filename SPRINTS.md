@@ -305,7 +305,7 @@
   - Persistência na URL
 - **Dependências**: Paginação (Sprint 2)
 
-#### 4. Exportação de Dados (18h)
+#### 4. Exportação de Dados (10h)
 - **IDs**: Epic 129, Feature 149, US-5.4 (#178)
 - **Descrição**: Exportar dados em múltiplos formatos
 - **Entregas**:
@@ -318,6 +318,21 @@
   - Download assíncrono para grandes volumes
   - Progress bar durante exportação
 - **Dependências**: Filtros Avançados
+
+#### 5. Autocomplete de Cidades com IATA (8h) ✅ CONCLUÍDO
+- **IDs**: Epic 129 (UX/UI Improvements)
+- **Descrição**: Seleção de cidades com códigos IATA para viagens
+- **Entregas**:
+  - ✅ Database de 50+ cidades brasileiras com códigos IATA
+  - ✅ API endpoint de busca de cidades com debounce
+  - ✅ Componente CityAutocomplete com navegação por teclado
+  - ✅ Formato padronizado: "CODE - Cidade/Estado" (ex: BSB - Brasília/DF)
+  - ✅ Validação de formato IATA em viagens
+  - ✅ Integração no TravelForm (cidade de partida + destino)
+  - ✅ Busca por código IATA, nome da cidade ou estado
+  - ✅ Highlighting de resultados e suporte a autocomplete
+- **Dependências**: Validações (Sprint 0)
+- **Status**: ✅ Implementado em 2025-01-27
 
 ### Critérios de Aceite da Sprint
 - [ ] Busca global funciona em todas as entidades principais

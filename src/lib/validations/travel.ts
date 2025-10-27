@@ -4,6 +4,7 @@
 
 import { z } from 'zod';
 import { validateReturnDate, validateMoneyAmount } from './validators';
+import { isValidIATAFormat } from '@/data/brazilian-cities';
 
 /**
  * Status de viagem válidos
@@ -37,14 +38,22 @@ const baseTravelSchema = {
     .optional(),
 
   destination: z
-    .string({ required_error: 'Destino é obrigatório' })
-    .min(2, 'Destino deve ter no mínimo 2 caracteres')
-    .max(255, 'Destino muito longo'),
+    .string({ required_error: 'Cidade de destino é obrigatória' })
+    .min(2, 'Cidade de destino deve ter no mínimo 2 caracteres')
+    .max(255, 'Cidade de destino muito longa')
+    .refine(
+      (val) => isValidIATAFormat(val),
+      'Formato inválido. Use: CÓDIGO - Cidade/Estado (ex: GIG - Rio de Janeiro/RJ)'
+    ),
 
   departureCity: z
     .string({ required_error: 'Cidade de partida é obrigatória' })
     .min(2, 'Cidade de partida deve ter no mínimo 2 caracteres')
-    .max(255, 'Cidade muito longa'),
+    .max(255, 'Cidade de partida muito longa')
+    .refine(
+      (val) => isValidIATAFormat(val),
+      'Formato inválido. Use: CÓDIGO - Cidade/Estado (ex: GRU - São Paulo/SP)'
+    ),
 
   departureDate: z
     .string()
