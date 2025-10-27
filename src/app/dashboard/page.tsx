@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RecentTravels from '@/components/dashboard/RecentTravels';
 import QuickActions from '@/components/dashboard/QuickActions';
+import { CardSkeleton } from '@/components/ui/Loading';
 
 export default function Dashboard() {
   return (
@@ -11,13 +13,17 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <StatsCards />
+      <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6">{[1, 2, 3].map(i => <CardSkeleton key={i} />)}</div>}>
+        <StatsCards />
+      </Suspense>
 
       {/* Quick Actions */}
       <QuickActions />
 
       {/* Recent Travels */}
-      <RecentTravels />
+      <Suspense fallback={<CardSkeleton />}>
+        <RecentTravels />
+      </Suspense>
     </div>
   );
 }

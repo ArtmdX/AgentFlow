@@ -7,6 +7,8 @@ import { getAddressByCEP } from '@/services/cepService';
 import { Customer } from '@prisma/client';
 import { Textarea } from '@/components/ui/TextArea';
 import { CustomerFormData } from '@/types/database';
+import { ApiErrorDisplay } from '@/components/error/ApiErrorDisplay';
+import { ErrorResponse } from '@/lib/error-handler';
 
 interface CustomerFormProps {
   onSubmit: (data: Customer) => void;
@@ -14,6 +16,8 @@ interface CustomerFormProps {
   initialData?: Partial<CustomerFormData>;
   submitButtonText?: string;
   onCancel: () => void;
+  error?: ErrorResponse | null;
+  onClearError?: () => void;
 }
 
 export function CustomerForm({
@@ -21,7 +25,9 @@ export function CustomerForm({
   isLoading,
   initialData = {},
   submitButtonText = 'Salvar',
-  onCancel
+  onCancel,
+  error,
+  onClearError
 }: CustomerFormProps) {
   const {
     register,
@@ -54,6 +60,14 @@ export function CustomerForm({
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+      {/* Exibir erro de API se houver */}
+      {error && (
+        <ApiErrorDisplay
+          error={error}
+          onDismiss={onClearError}
+        />
+      )}
+
       {/* Seção de Dados Obrigatórios */}
       <div className="p-6 bg-white rounded-lg shadow">
         <h3 className="text-lg font-medium leading-6 text-gray-900 border-b pb-4">Dados Obrigatórios</h3>
