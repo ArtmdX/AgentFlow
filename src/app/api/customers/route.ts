@@ -2,20 +2,21 @@
 
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Customer } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import { handleAPIError } from '@/lib/error-handler';
+import { AuthenticationError } from '@/lib/errors';
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user?.id) {
-    return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
-  }
-
-  const userId = session.user.id;
-
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.id) {
+      throw new AuthenticationError('Você precisa estar autenticado para acessar esta página');
+    }
+
+    const userId = session.user.id;
+
     const [customers, totalCustomers, totalTravels, totalRevenue] = await Promise.all([
       prisma.customer.findMany({
         where: { createdById: userId, isActive: true },
@@ -48,39 +49,36 @@ export async function GET() {
       }
     }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao buscar clientes:', error);
-    return NextResponse.json({ message: 'Erro interno do servidor' }, { status: 500 });
+    return handleAPIError(error);
   }
 }
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user?.id) {
-    return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
-  }
-
-  const userId = session.user.id;
-
   try {
-    const body = await request.json();
-    const { firstName, lastName, email, phone }: Customer = body;
+    const session = await getServerSession(authOptions);
 
-    if (!firstName || !lastName || !email || !phone) {
-      return NextResponse.json({ message: 'Campos obrigatórios não foram preenchidos' }, { status: 400 });
+    if (!session || !session.user?.id) {
+      throw new AuthenticationError('Você precisa estar autenticado para criar um cliente');
     }
+
+    const userId = session.user.id;
+
+    const body = await request.json();
+
+    // Validação com Zod
+    const { customerCreateSchema } = await import('@/lib/validations/customer');
+    const validatedData = customerCreateSchema.parse(body);
 
     const newCustomer = await prisma.customer.create({
       data: {
-        ...body,
-        birthDate: body.birthDate ? new Date(body.birthDate) : null,
+        ...validatedData,
+        birthDate: validatedData.birthDate ? new Date(validatedData.birthDate) : null,
         createdById: userId
       }
     });
 
     return NextResponse.json(newCustomer, { status: 201 });
   } catch (error) {
-    console.error('Erro ao criar cliente:', error);
-    return NextResponse.json({ message: 'Erro interno do servidor' }, { status: 500 });
+    return handleAPIError(error);
   }
 }
