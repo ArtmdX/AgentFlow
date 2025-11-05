@@ -22,7 +22,10 @@ export {
   paymentUpdateSchema,
 } from '../validations';
 
-// User/Auth schemas (mantém os existentes do validations.ts)
+// User/Auth schemas
+export * from './user';
+
+// Legacy schemas (mantém os existentes do validations.ts)
 export {
   registerSchema,
 } from '../validations';
