@@ -229,7 +229,7 @@ export function UserTable({ initialUsers, onUserUpdate }: UserTableProps) {
         title="Resetar Senha"
         message={`Tem certeza que deseja resetar a senha de ${selectedUser?.firstName} ${selectedUser?.lastName}? A senha será alterada para "senha123".`}
         confirmText="Resetar Senha"
-        isProcessing={isProcessing}
+        loading={isProcessing}
         variant="warning"
       />
 
@@ -248,8 +248,8 @@ export function UserTable({ initialUsers, onUserUpdate }: UserTableProps) {
             : `Tem certeza que deseja ativar ${selectedUser?.firstName} ${selectedUser?.lastName}? O usuário poderá fazer login novamente.`
         }
         confirmText={selectedUser?.isActive ? 'Desativar' : 'Ativar'}
-        isProcessing={isProcessing}
-        variant={selectedUser?.isActive ? 'danger' : 'success'}
+        loading={isProcessing}
+        variant={selectedUser?.isActive ? 'danger' : 'info'}
       />
     </>
   );

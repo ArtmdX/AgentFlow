@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User as UserIcon, Lock, Save } from 'lucide-react';
@@ -10,18 +9,16 @@ import { ApiErrorDisplay } from '@/components/error/ApiErrorDisplay';
 import { Loading } from '@/components/ui/Loading';
 import { getProfile, updateProfile, changePassword } from '@/services/userClientService';
 import { updateProfileSchema, changePasswordSchema, type UpdateProfileInput, type ChangePasswordInput } from '@/lib/validations/user';
-import { ErrorResponse } from '@/lib/error-handler';
 import type { User } from '@/services/userClientService';
 
 type Tab = 'personal' | 'security';
 
 export default function ProfilePage() {
-  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<Tab>('personal');
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<ErrorResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Form para dados pessoais
@@ -58,10 +55,7 @@ export default function ProfilePage() {
         }
       } catch (err) {
         console.error('Erro ao carregar perfil:', err);
-        setError({
-          error: 'Erro ao carregar perfil',
-          message: 'Ocorreu um erro ao carregar seus dados'
-        });
+        setError('Ocorreu um erro ao carregar seus dados');
       } finally {
         setIsLoadingUser(false);
       }
@@ -83,17 +77,11 @@ export default function ProfilePage() {
         setSuccessMessage('Perfil atualizado com sucesso!');
         setTimeout(() => setSuccessMessage(null), 5000);
       } else {
-        setError({
-          error: 'Erro ao atualizar perfil',
-          message: 'Ocorreu um erro ao atualizar seu perfil'
-        });
+        setError('Ocorreu um erro ao atualizar seu perfil');
       }
     } catch (err) {
       console.error('Erro ao atualizar perfil:', err);
-      setError({
-        error: 'Erro ao atualizar perfil',
-        message: err instanceof Error ? err.message : 'Ocorreu um erro inesperado'
-      });
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro inesperado');
     } finally {
       setIsSubmitting(false);
     }
@@ -112,17 +100,11 @@ export default function ProfilePage() {
         resetPassword();
         setTimeout(() => setSuccessMessage(null), 5000);
       } else {
-        setError({
-          error: 'Erro ao alterar senha',
-          message: 'Ocorreu um erro ao alterar sua senha'
-        });
+        setError('Ocorreu um erro ao alterar sua senha');
       }
     } catch (err) {
       console.error('Erro ao alterar senha:', err);
-      setError({
-        error: 'Erro ao alterar senha',
-        message: err instanceof Error ? err.message : 'Ocorreu um erro inesperado'
-      });
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro inesperado');
     } finally {
       setIsSubmitting(false);
     }

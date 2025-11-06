@@ -15,7 +15,7 @@ interface ConfirmDialogProps {
   loading?: boolean;
 }
 
-export default function ConfirmDialog({
+export function ConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
@@ -143,3 +143,5 @@ export function useConfirmDialog() {
     ConfirmDialog: ConfirmDialogComponent
   };
 }
+
+export default ConfirmDialog;

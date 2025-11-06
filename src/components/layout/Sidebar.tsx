@@ -3,25 +3,48 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Users, Plane, CreditCard, BarChart3, Settings } from "lucide-react";
+import { Home, Users, Plane, CreditCard, BarChart3, Settings, UserCog, UserCircle } from "lucide-react";
+import { usePermissions } from "@/hooks/usePermissions";
+import { Permission } from "@/lib/permissions";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Clientes", href: "/dashboard/customers", icon: Users },
-  { name: "Viagens", href: "/dashboard/travels", icon: Plane },
-  { name: "Pagamentos", href: "/dashboard/payments", icon: CreditCard },
-  { name: "Relatórios", href: "/dashboard/reports", icon: BarChart3 },
-  { name: "Configurações", href: "/dashboard/settings", icon: Settings },
-];
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permission?: Permission;
+}
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { checkPermission } = usePermissions();
+
+  const navigation: NavigationItem[] = [
+    { name: "Dashboard", href: "/dashboard", icon: Home },
+    { name: "Clientes", href: "/dashboard/customers", icon: Users },
+    { name: "Viagens", href: "/dashboard/travels", icon: Plane },
+    { name: "Pagamentos", href: "/dashboard/payments", icon: CreditCard },
+    { name: "Relatórios", href: "/dashboard/reports", icon: BarChart3 },
+    {
+      name: "Usuários",
+      href: "/dashboard/users",
+      icon: UserCog,
+      permission: Permission.VIEW_USERS
+    },
+    { name: "Perfil", href: "/dashboard/profile", icon: UserCircle },
+    { name: "Configurações", href: "/dashboard/settings", icon: Settings },
+  ];
+
+  // Filtrar itens baseado em permissões
+  const visibleNavigation = navigation.filter((item) => {
+    if (!item.permission) return true;
+    return checkPermission(item.permission);
+  });
 
   return (
     <div className="flex flex-col w-64 bg-gray-50 border-r border-gray-200">
       <div className="flex-1 px-4 py-6">
         <nav className="space-y-2">
-          {navigation.map((item) => {
+          {visibleNavigation.map((item) => {
             const Icon = item.icon;
             const isActive = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
 

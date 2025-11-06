@@ -8,19 +8,18 @@ import prisma from '@/lib/prisma';
 import { handleAPIError } from '@/lib/error-handler';
 import { AuthenticationError, AuthorizationError } from '@/lib/errors';
 import { createUserSchema } from '@/lib/validations/user';
-import { hasPermission } from '@/lib/permissions';
-import type { Session } from 'next-auth';
+import { hasPermission, Permission, type SessionWithRole } from '@/lib/permissions';
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado para acessar esta página');
     }
 
     // Verificar permissão para gerenciar usuários
-    if (!hasPermission(session, 'manage_users')) {
+    if (!hasPermission(session, Permission.VIEW_USERS)) {
       throw new AuthorizationError('Você não tem permissão para gerenciar usuários');
     }
 
@@ -49,14 +48,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado para criar um usuário');
     }
 
     // Verificar permissão para criar usuários
-    if (!hasPermission(session, 'create_user')) {
+    if (!hasPermission(session, Permission.CREATE_USER)) {
       throw new AuthorizationError('Você não tem permissão para criar usuários');
     }
 

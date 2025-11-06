@@ -6,13 +6,13 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { UserForm } from '@/components/users/UserForm';
 import { createUser } from '@/services/userClientService';
-import { ErrorResponse } from '@/lib/error-handler';
+
 import type { CreateUserInput } from '@/lib/validations/user';
 
 export default function NewUserPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<ErrorResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (data: CreateUserInput) => {
     setIsLoading(true);
@@ -25,17 +25,11 @@ export default function NewUserPage() {
         alert(`Usuário criado com sucesso!\n\nEmail: ${result.email}\nSenha: (conforme cadastrada)\n\nOriente o usuário a fazer login.`);
         router.push('/dashboard/users');
       } else {
-        setError({
-          error: 'Erro ao criar usuário',
-          message: 'Ocorreu um erro ao criar o usuário. Tente novamente.'
-        });
+        setError('Ocorreu um erro ao criar o usuário. Tente novamente.');
       }
     } catch (err) {
       console.error('Erro ao criar usuário:', err);
-      setError({
-        error: 'Erro ao criar usuário',
-        message: err instanceof Error ? err.message : 'Ocorreu um erro inesperado'
-      });
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro inesperado');
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +63,8 @@ export default function NewUserPage() {
 
       {/* Form */}
       <UserForm
-        onSubmit={handleSubmit}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSubmit={handleSubmit as any}
         isLoading={isLoading}
         submitButtonText="Criar Usuário"
         onCancel={handleCancel}

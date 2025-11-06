@@ -2,34 +2,29 @@
 
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import bcrypt from 'bcryptjs';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { handleAPIError } from '@/lib/error-handler';
 import { AuthenticationError, AuthorizationError, NotFoundError } from '@/lib/errors';
 import { updateUserSchema } from '@/lib/validations/user';
-import { hasPermission } from '@/lib/permissions';
-import type { Session } from 'next-auth';
+import { hasPermission, Permission, type SessionWithRole } from '@/lib/permissions';
 
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
-
-export async function GET(request: Request, context: RouteContext) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado');
     }
 
     // Permitir que usuário veja seus próprios dados ou admin/manager vejam qualquer usuário
-    const { id } = context.params;
+    const { id } = await params;
     const isOwnProfile = session.user.id === id;
 
-    if (!isOwnProfile && !hasPermission(session, 'manage_users')) {
+    if (!isOwnProfile && !hasPermission(session, Permission.VIEW_USERS)) {
       throw new AuthorizationError('Você não tem permissão para ver dados de outros usuários');
     }
 
@@ -58,18 +53,21 @@ export async function GET(request: Request, context: RouteContext) {
   }
 }
 
-export async function PUT(request: Request, context: RouteContext) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado');
     }
 
-    const { id } = context.params;
+    const { id } = await params;
 
     // Verificar permissão para editar usuários
-    if (!hasPermission(session, 'edit_user')) {
+    if (!hasPermission(session, Permission.UPDATE_USER)) {
       throw new AuthorizationError('Você não tem permissão para editar usuários');
     }
 
@@ -131,18 +129,21 @@ export async function PUT(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: Request, context: RouteContext) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado');
     }
 
-    const { id } = context.params;
+    const { id } = await params;
 
     // Apenas admin pode deletar usuários
-    if (!hasPermission(session, 'delete_user')) {
+    if (!hasPermission(session, Permission.DELETE_USER)) {
       throw new AuthorizationError('Você não tem permissão para deletar usuários');
     }
 

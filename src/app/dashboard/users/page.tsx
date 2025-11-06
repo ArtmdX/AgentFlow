@@ -4,11 +4,10 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
-import { hasPermission } from '@/lib/permissions';
+import { hasPermission, Permission, type SessionWithRole } from '@/lib/permissions';
 import prisma from '@/lib/prisma';
 import { UserTable } from '@/components/users/UserTable';
 import { Loading } from '@/components/ui/Loading';
-import type { Session } from 'next-auth';
 
 async function getUsers() {
   const users = await prisma.user.findMany({
@@ -30,14 +29,14 @@ async function getUsers() {
 }
 
 export default async function UsersPage() {
-  const session = await getServerSession(authOptions) as Session | null;
+  const session = await getServerSession(authOptions) as SessionWithRole | null;
 
   if (!session || !session.user) {
     redirect('/auth/login');
   }
 
   // Verificar permissão para gerenciar usuários
-  if (!hasPermission(session, 'manage_users')) {
+  if (!hasPermission(session, Permission.VIEW_USERS)) {
     redirect('/dashboard');
   }
 
@@ -117,7 +116,8 @@ export default async function UsersPage() {
 
       {/* Table */}
       <Suspense fallback={<Loading />}>
-        <UserTable initialUsers={users} />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <UserTable initialUsers={users as any} />
       </Suspense>
     </div>
   );

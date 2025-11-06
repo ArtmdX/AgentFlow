@@ -6,27 +6,23 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { handleAPIError } from '@/lib/error-handler';
 import { AuthenticationError, AuthorizationError, NotFoundError } from '@/lib/errors';
-import { hasPermission } from '@/lib/permissions';
-import type { Session } from 'next-auth';
+import { hasPermission, Permission, type SessionWithRole } from '@/lib/permissions';
 
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
-
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const session = await getServerSession(authOptions) as Session | null;
+    const session = await getServerSession(authOptions) as SessionWithRole | null;
 
     if (!session || !session.user?.id) {
       throw new AuthenticationError('Você precisa estar autenticado');
     }
 
-    const { id } = context.params;
+    const { id } = await params;
 
     // Verificar permissão
-    if (!hasPermission(session, 'edit_user')) {
+    if (!hasPermission(session, Permission.UPDATE_USER)) {
       throw new AuthorizationError('Você não tem permissão para ativar/desativar usuários');
     }
 

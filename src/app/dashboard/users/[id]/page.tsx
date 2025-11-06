@@ -4,10 +4,9 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Edit, Mail, Phone, Calendar, Shield, Activity } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
-import { hasPermission } from '@/lib/permissions';
+import { hasPermission, Permission, type SessionWithRole } from '@/lib/permissions';
 import prisma from '@/lib/prisma';
 import { Loading } from '@/components/ui/Loading';
-import type { Session } from 'next-auth';
 
 async function getUser(id: string) {
   const user = await prisma.user.findUnique({
@@ -36,31 +35,33 @@ async function getUser(id: string) {
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function UserDetailPage({ params }: PageProps) {
-  const session = await getServerSession(authOptions) as Session | null;
+  const { id } = await params;
+  const session = await getServerSession(authOptions) as SessionWithRole | null;
 
   if (!session || !session.user) {
     redirect('/auth/login');
   }
 
   // Verificar permissão
-  const isOwnProfile = session.user.id === params.id;
-  if (!isOwnProfile && !hasPermission(session, 'manage_users')) {
+  const isOwnProfile = session.user.id === id;
+  if (!isOwnProfile && !hasPermission(session, Permission.VIEW_USERS)) {
     redirect('/dashboard');
   }
 
-  const user = await getUser(params.id);
+  const user = await getUser(id);
 
   if (!user) {
     notFound();
   }
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (role: string | null) => {
+    const roleKey = role || 'agent';
     const badges = {
       admin: 'bg-purple-100 text-purple-800',
       manager: 'bg-blue-100 text-blue-800',
@@ -74,18 +75,19 @@ export default async function UserDetailPage({ params }: PageProps) {
     };
 
     return (
-      <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${badges[role as keyof typeof badges]}`}>
-        {labels[role as keyof typeof labels]}
+      <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${badges[roleKey as keyof typeof badges]}`}>
+        {labels[roleKey as keyof typeof labels]}
       </span>
     );
   };
 
-  const getStatusBadge = (isActive: boolean) => {
+  const getStatusBadge = (isActive: boolean | null) => {
+    const active = isActive !== null ? isActive : false;
     return (
       <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${
-        isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
       }`}>
-        {isActive ? 'Ativo' : 'Inativo'}
+        {active ? 'Ativo' : 'Inativo'}
       </span>
     );
   };
@@ -111,9 +113,9 @@ export default async function UserDetailPage({ params }: PageProps) {
               </p>
             </div>
           </div>
-          {hasPermission(session, 'edit_user') && (
+          {hasPermission(session, Permission.UPDATE_USER) && (
             <Link
-              href={`/dashboard/users/${params.id}/edit`}
+              href={`/dashboard/users/${id}/edit`}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Edit className="h-4 w-4 mr-2" />
@@ -180,11 +182,11 @@ export default async function UserDetailPage({ params }: PageProps) {
                   Data de Cadastro
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {new Date(user.createdAt).toLocaleDateString('pt-BR', {
+                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR', {
                     day: '2-digit',
                     month: 'long',
                     year: 'numeric'
-                  })}
+                  }) : 'N/A'}
                 </dd>
               </div>
 
@@ -194,11 +196,11 @@ export default async function UserDetailPage({ params }: PageProps) {
                   Última Atualização
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {new Date(user.updatedAt).toLocaleDateString('pt-BR', {
+                  {user.updatedAt ? new Date(user.updatedAt).toLocaleDateString('pt-BR', {
                     day: '2-digit',
                     month: 'long',
                     year: 'numeric'
-                  })}
+                  }) : 'N/A'}
                 </dd>
               </div>
             </dl>

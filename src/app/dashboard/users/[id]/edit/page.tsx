@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { UserForm } from '@/components/users/UserForm';
 import { getUser, updateUser } from '@/services/userClientService';
 import { Loading } from '@/components/ui/Loading';
-import { ErrorResponse } from '@/lib/error-handler';
 import type { UpdateUserInput } from '@/lib/validations/user';
 import type { User } from '@/services/userClientService';
 
@@ -19,7 +18,7 @@ export default function EditUserPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<ErrorResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadUser() {
@@ -28,17 +27,11 @@ export default function EditUserPage() {
         if (userData) {
           setUser(userData);
         } else {
-          setError({
-            error: 'Usuário não encontrado',
-            message: 'O usuário solicitado não foi encontrado'
-          });
+          setError('O usuário solicitado não foi encontrado');
         }
       } catch (err) {
         console.error('Erro ao carregar usuário:', err);
-        setError({
-          error: 'Erro ao carregar usuário',
-          message: 'Ocorreu um erro ao carregar os dados do usuário'
-        });
+        setError('Ocorreu um erro ao carregar os dados do usuário');
       } finally {
         setIsLoadingUser(false);
       }
@@ -58,17 +51,11 @@ export default function EditUserPage() {
         alert('Usuário atualizado com sucesso!');
         router.push(`/dashboard/users/${userId}`);
       } else {
-        setError({
-          error: 'Erro ao atualizar usuário',
-          message: 'Ocorreu um erro ao atualizar o usuário. Tente novamente.'
-        });
+        setError('Ocorreu um erro ao atualizar o usuário. Tente novamente.');
       }
     } catch (err) {
       console.error('Erro ao atualizar usuário:', err);
-      setError({
-        error: 'Erro ao atualizar usuário',
-        message: err instanceof Error ? err.message : 'Ocorreu um erro inesperado'
-      });
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro inesperado');
     } finally {
       setIsSubmitting(false);
     }

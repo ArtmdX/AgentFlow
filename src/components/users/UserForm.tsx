@@ -10,12 +10,12 @@ import { createUserSchema, updateUserSchema, type CreateUserInput, type UpdateUs
 import type { User } from '@/services/userClientService';
 
 interface UserFormProps {
-  onSubmit: (data: CreateUserInput | UpdateUserInput) => void;
+  onSubmit: (data: CreateUserInput | UpdateUserInput) => void | Promise<void>;
   isLoading: boolean;
   initialData?: Partial<User>;
   submitButtonText?: string;
   onCancel: () => void;
-  error?: ErrorResponse | null;
+  error?: ErrorResponse | Error | string | null;
   onClearError?: () => void;
   mode?: 'create' | 'edit';
 }
@@ -119,7 +119,7 @@ export function UserForm({
                 label="Senha *"
                 type="password"
                 {...register('password' as keyof CreateUserInput)}
-                error={errors.password?.message}
+                error={('password' in errors) ? errors.password?.message : undefined}
                 disabled={isLoading}
                 placeholder="Mínimo 6 caracteres"
               />

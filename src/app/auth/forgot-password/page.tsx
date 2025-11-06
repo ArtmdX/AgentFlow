@@ -1,19 +1,152 @@
 'use client';
-import Link from 'next/link';
 
-export default function ForgotPassword() {
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { ArrowLeft, Mail, CheckCircle } from 'lucide-react';
+import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/user';
+import { forgotPassword } from '@/services/userClientService';
+
+export default function ForgotPasswordPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema)
+  });
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    setIsSubmitting(true);
+    setError('');
+    setSuccess(false);
+
+    try {
+      const result = await forgotPassword(data);
+
+      if (result) {
+        setSuccess(true);
+      } else {
+        setError('Ocorreu um erro ao processar sua solicitação. Tente novamente.');
+      }
+    } catch (err) {
+      console.error('Erro ao solicitar recuperação de senha:', err);
+      setError('Ocorreu um erro inesperado. Tente novamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
+          <div className="text-center">
+            <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">Email Enviado!</h2>
+            <p className="mt-4 text-sm text-gray-600">
+              Se o email fornecido estiver cadastrado em nosso sistema, você receberá um link para redefinir sua senha.
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Verifique sua caixa de entrada e spam.
+            </p>
+            <div className="mt-2 p-3 bg-blue-50 rounded-md">
+              <p className="text-xs text-blue-700">
+                <strong>Desenvolvimento:</strong> O token foi logado no console do servidor.
+                Em produção, um email será enviado.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <Link
+              href="/auth/login"
+              className="w-full flex justify-center items-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Voltar para Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
         <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900">Recuperar Senha</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">Esta funcionalidade estará disponível em breve</p>
-        </div>
-
-        <div className="text-center">
-          <Link href="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar para login
           </Link>
+          <h2 className="text-center text-3xl font-bold text-gray-900">Recuperar Senha</h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Digite seu email e enviaremos um link para redefinir sua senha
+          </p>
+        </div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                id="email"
+                type="email"
+                {...register('email')}
+                className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="seu@email.com"
+                disabled={isSubmitting}
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Enviando...' : 'Enviar Link de Recuperação'}
+            </button>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Lembrou da senha?{' '}
+              <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+                Fazer login
+              </Link>
+            </p>
+          </div>
+        </form>
+
+        <div className="mt-6 p-4 bg-gray-50 rounded-md">
+          <h3 className="text-sm font-medium text-gray-900 mb-2">Precisa de ajuda?</h3>
+          <p className="text-xs text-gray-600">
+            Se você não receber o email em alguns minutos, verifique sua pasta de spam ou entre em contato com o administrador do sistema.
+          </p>
         </div>
       </div>
     </div>
