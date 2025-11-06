@@ -9,12 +9,14 @@
 ---
 
 ## Sprint 0: Fundações Críticas
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Estabelecer infraestrutura base para evitar retrabalho futuro
 
 ### Itens do Backlog
 
 #### 1. Permissões por Role (15h)
+
 - **IDs**: Epic 130, Feature 154, US-6.4 (#183)
 - **Descrição**: Sistema de controle de acesso baseado em roles (admin, manager, agent)
 - **Entregas**:
@@ -25,6 +27,7 @@
 - **Dependências**: Nenhuma (fundação)
 
 #### 2. Validações de Formulário Melhoradas (12h)
+
 - **IDs**: Epic 130, Feature 151, US-6.1 (#180)
 - **Descrição**: Aprimorar validações client-side e server-side
 - **Entregas**:
@@ -35,6 +38,7 @@
 - **Dependências**: Nenhuma (fundação)
 
 #### 3. Tratamento de Erros (18h)
+
 - **IDs**: Epic 132, Feature 160, US-8.3 (#189)
 - **Descrição**: Sistema centralizado de tratamento de erros
 - **Entregas**:
@@ -46,6 +50,7 @@
 - **Dependências**: Nenhuma (fundação)
 
 #### 4. Loading States e Feedback (15h)
+
 - **IDs**: Epic 129, Feature 150, US-5.5 (#179)
 - **Descrição**: Estados de carregamento consistentes em toda aplicação
 - **Entregas**:
@@ -57,6 +62,7 @@
 - **Dependências**: Nenhuma (fundação)
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Sistema de roles funcional em todas as rotas principais
 - [ ] Validações bloqueiam submissões inválidas em todos os formulários
 - [ ] Erros são capturados e exibidos de forma user-friendly
@@ -66,12 +72,14 @@
 ---
 
 ## Sprint 1: Gestão de Usuários + Validações
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Sistema completo de gestão de usuários e prevenção de dados duplicados
 
 ### Itens do Backlog
 
 #### 1. Recuperação de Senha (14h)
+
 - **IDs**: Epic 125, Feature 134, US-1.1 (#163)
 - **Descrição**: Fluxo completo de reset de senha
 - **Entregas**:
@@ -83,6 +91,7 @@
 - **Dependências**: Tratamento de Erros (Sprint 0)
 
 #### 2. Perfil de Usuário (12h)
+
 - **IDs**: Epic 125, Feature 135, US-1.2 (#164)
 - **Descrição**: Página de perfil e edição de dados pessoais
 - **Entregas**:
@@ -94,6 +103,7 @@
 - **Dependências**: Validações de Formulário (Sprint 0), Permissões (Sprint 0)
 
 #### 3. Gestão de Usuários (Admin) (20h)
+
 - **IDs**: Epic 125, Feature 136, US-1.3 (#165)
 - **Descrição**: CRUD completo de usuários para administradores
 - **Entregas**:
@@ -106,6 +116,7 @@
 - **Dependências**: Permissões por Role (Sprint 0), Perfil de Usuário
 
 #### 4. Prevenção de Duplicatas (14h)
+
 - **IDs**: Epic 130, Feature 152, US-6.2 (#181)
 - **Descrição**: Sistema para detectar e prevenir registros duplicados
 - **Entregas**:
@@ -118,6 +129,7 @@
 - **Dependências**: Validações de Formulário (Sprint 0)
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Usuários podem recuperar senha via e-mail
 - [ ] Usuários podem editar seu próprio perfil
 - [ ] Admins podem criar, editar e desativar usuários
@@ -128,12 +140,14 @@
 ---
 
 ## Sprint 2: Performance + Auditoria Base
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Otimizações de performance e sistema básico de auditoria
 
 ### Itens do Backlog
 
 #### 1. Paginação em Listagens (12h)
+
 - **IDs**: Epic 131, Feature 155, US-7.1 (#184)
 - **Descrição**: Implementar paginação em todas as listagens
 - **Entregas**:
@@ -145,6 +159,7 @@
 - **Dependências**: Loading States (Sprint 0)
 
 #### 2. Cache e Otimização de Queries (18h)
+
 - **IDs**: Epic 131, Feature 156, US-7.2 (#185)
 - **Descrição**: Otimização de queries e cache strategies
 - **Entregas**:
@@ -157,6 +172,7 @@
 - **Dependências**: Paginação
 
 #### 3. Log de Atividades (16h)
+
 - **IDs**: Epic 128, Feature 143, US-4.1 (#172)
 - **Descrição**: Sistema de auditoria para ações importantes
 - **Entregas**:
@@ -169,6 +185,7 @@
 - **Dependências**: Nenhuma
 
 #### 4. Timeline de Atividades (14h)
+
 - **IDs**: Epic 128, Feature 144, US-4.2 (#173)
 - **Descrição**: Interface visual para histórico de atividades
 - **Entregas**:
@@ -181,6 +198,7 @@
 - **Dependências**: Log de Atividades
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Todas as listagens paginadas e performáticas
 - [ ] Cache implementado com invalidação correta
 - [ ] Queries otimizadas (redução de N+1)
@@ -191,12 +209,14 @@
 ---
 
 ## Sprint 3: Relatórios Essenciais
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Analytics e relatórios para tomada de decisão
 
 ### Itens do Backlog
 
 #### 1. Relatório de Vendas (16h)
+
 - **IDs**: Epic 126, Feature 137, US-2.1 (#166)
 - **Descrição**: Relatório detalhado de vendas e conversões
 - **Entregas**:
@@ -211,6 +231,7 @@
 - **Dependências**: Cache (Sprint 2), Paginação (Sprint 2)
 
 #### 2. Relatório de Pagamentos (16h)
+
 - **IDs**: Epic 126, Feature 138, US-2.2 (#167)
 - **Descrição**: Análise financeira de pagamentos
 - **Entregas**:
@@ -225,6 +246,7 @@
 - **Dependências**: Cache (Sprint 2), Paginação (Sprint 2)
 
 #### 3. Dashboard Avançado (18h)
+
 - **IDs**: Epic 126, Feature 139, US-2.3 (#168)
 - **Descrição**: Dashboard executivo com KPIs principais
 - **Entregas**:
@@ -240,6 +262,7 @@
 - **Dependências**: Relatório de Vendas, Relatório de Pagamentos
 
 #### 4. Cálculos Automáticos (10h)
+
 - **IDs**: Epic 130, Feature 153, US-6.3 (#182)
 - **Descrição**: Automação de cálculos em viagens e pagamentos
 - **Entregas**:
@@ -252,6 +275,7 @@
 - **Dependências**: Validações (Sprint 0)
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Relatórios de vendas e pagamentos funcionais e precisos
 - [ ] Dashboard exibe KPIs atualizados em tempo real
 - [ ] Cálculos automáticos corretos em todas as operações
@@ -262,12 +286,14 @@
 ---
 
 ## Sprint 4: UX/UI + Filtros
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Melhorias de experiência do usuário e capacidades de busca
 
 ### Itens do Backlog
 
 #### 1. Busca Global (16h)
+
 - **IDs**: Epic 129, Feature 146, US-5.1 (#175)
 - **Descrição**: Busca unificada em toda aplicação
 - **Entregas**:
@@ -281,6 +307,7 @@
 - **Dependências**: Cache (Sprint 2)
 
 #### 2. Filtros Avançados - Viagens (14h)
+
 - **IDs**: Epic 129, US-5.2 (#176)
 - **Descrição**: Sistema de filtros robusto para listagem de viagens
 - **Entregas**:
@@ -294,6 +321,7 @@
 - **Dependências**: Paginação (Sprint 2)
 
 #### 3. Filtros Avançados - Clientes (12h)
+
 - **IDs**: Epic 129, Feature 148, US-5.3 (#177)
 - **Descrição**: Filtros para listagem de clientes
 - **Entregas**:
@@ -306,6 +334,7 @@
 - **Dependências**: Paginação (Sprint 2)
 
 #### 4. Exportação de Dados (10h)
+
 - **IDs**: Epic 129, Feature 149, US-5.4 (#178)
 - **Descrição**: Exportar dados em múltiplos formatos
 - **Entregas**:
@@ -320,6 +349,7 @@
 - **Dependências**: Filtros Avançados
 
 #### 5. Autocomplete de Cidades com IATA (8h) ✅ CONCLUÍDO
+
 - **IDs**: Epic 129 (UX/UI Improvements)
 - **Descrição**: Seleção de cidades com códigos IATA para viagens
 - **Entregas**:
@@ -335,6 +365,7 @@
 - **Status**: ✅ Implementado em 2025-01-27
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Busca global funciona em todas as entidades principais
 - [ ] Filtros avançados em viagens e clientes
 - [ ] Filtros persistem na URL e podem ser compartilhados
@@ -345,12 +376,14 @@
 ---
 
 ## Sprint 5: Notificações
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Sistema completo de comunicação e alertas
 
 ### Itens do Backlog
 
 #### 1. Notificações In-App (16h)
+
 - **IDs**: Epic 127, Feature 140, US-3.1 (#169)
 - **Descrição**: Sistema de notificações dentro da aplicação
 - **Entregas**:
@@ -365,6 +398,7 @@
 - **Dependências**: Log de Atividades (Sprint 2)
 
 #### 2. Envio de E-mails (18h)
+
 - **IDs**: Epic 127, Feature 141, US-3.2 (#170)
 - **Descrição**: Infraestrutura de envio de e-mails transacionais
 - **Entregas**:
@@ -379,6 +413,7 @@
 - **Dependências**: Templates de E-mail, Tratamento de Erros (Sprint 0)
 
 #### 3. Lembretes e Alertas (14h)
+
 - **IDs**: Epic 127, Feature 142, US-3.3 (#171)
 - **Descrição**: Sistema de lembretes automáticos
 - **Entregas**:
@@ -393,6 +428,7 @@
 - **Dependências**: Notificações In-App, Envio de E-mails
 
 #### 4. Templates de E-mail (12h)
+
 - **IDs**: Epic 133, Feature 162, US-9.2 (#191)
 - **Descrição**: Editor e gestão de templates de e-mail
 - **Entregas**:
@@ -406,6 +442,7 @@
 - **Dependências**: Permissões (Sprint 0)
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Notificações in-app funcionam em tempo real
 - [ ] E-mails são enviados corretamente para eventos chave
 - [ ] Lembretes automáticos disparam nos momentos corretos
@@ -416,12 +453,14 @@
 ---
 
 ## Sprint 6: Auditoria + Configurações
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Compliance, configurações e mobile
 
 ### Itens do Backlog
 
 #### 1. Relatório de Auditoria (14h)
+
 - **IDs**: Epic 128, Feature 145, US-4.3 (#174)
 - **Descrição**: Relatório completo de auditoria para compliance
 - **Entregas**:
@@ -436,6 +475,7 @@
 - **Dependências**: Log de Atividades (Sprint 2), Exportação (Sprint 4)
 
 #### 2. Configurações da Agência (18h)
+
 - **IDs**: Epic 133, Feature 161, US-9.1 (#190)
 - **Descrição**: Página de configurações gerais do sistema
 - **Entregas**:
@@ -451,6 +491,7 @@
 - **Dependências**: Permissões (Sprint 0)
 
 #### 3. Responsividade Mobile (20h)
+
 - **IDs**: Epic 131, Feature 157, US-7.3 (#186)
 - **Descrição**: Adaptar toda aplicação para dispositivos móveis
 - **Entregas**:
@@ -465,6 +506,7 @@
 - **Dependências**: Todas as features principais implementadas
 
 #### 4. Testes Manuais e Ajustes (8h)
+
 - **Descrição**: Buffer para testes e correções
 - **Entregas**:
   - Testes exploratórios em todas as features
@@ -473,6 +515,7 @@
   - Documentação de issues conhecidas
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Relatório de auditoria completo e exportável
 - [ ] Configurações da agência funcionais
 - [ ] Aplicação totalmente responsiva em mobile
@@ -482,12 +525,14 @@
 ---
 
 ## Sprint 7: Qualidade
+
 **Duração**: 2 semanas | **Capacidade**: 60 horas
 **Objetivo**: Testes automatizados e estabilização do sistema
 
 ### Itens do Backlog
 
 #### 1. Testes Unitários (30h)
+
 - **IDs**: Epic 132, Feature 158, US-8.1 (#187)
 - **Descrição**: Suite de testes unitários
 - **Entregas**:
@@ -503,6 +548,7 @@
 - **Dependências**: Todas as features implementadas
 
 #### 2. Testes de Integração (API) (25h)
+
 - **IDs**: Epic 132, Feature 159, US-8.2 (#188)
 - **Descrição**: Testes de integração das APIs
 - **Entregas**:
@@ -521,6 +567,7 @@
 - **Dependências**: Todas as features implementadas
 
 #### 3. Estabilização e Documentação (5h)
+
 - **Descrição**: Últimos ajustes e documentação
 - **Entregas**:
   - Atualização do README.md
@@ -530,6 +577,7 @@
   - Known issues e roadmap futuro
 
 ### Critérios de Aceite da Sprint
+
 - [ ] Coverage de testes unitários ≥ 70%
 - [ ] Testes de integração em todas as APIs principais
 - [ ] CI/CD pipeline configurado
@@ -541,19 +589,20 @@
 
 ## Resumo do Planejamento
 
-| Sprint | Foco Principal | Horas | Itens |
-|--------|----------------|-------|-------|
-| **Sprint 0** | Fundações Críticas | 60h | 4 |
-| **Sprint 1** | Gestão de Usuários | 60h | 4 |
-| **Sprint 2** | Performance + Auditoria | 60h | 4 |
-| **Sprint 3** | Relatórios | 60h | 4 |
-| **Sprint 4** | UX/UI + Filtros | 60h | 4 |
-| **Sprint 5** | Notificações | 60h | 4 |
-| **Sprint 6** | Auditoria + Config + Mobile | 60h | 4 |
-| **Sprint 7** | Qualidade e Testes | 60h | 3 |
-| **TOTAL** | - | **420h** | **31** |
+| Sprint       | Foco Principal              | Horas    | Itens  |
+| ------------ | --------------------------- | -------- | ------ |
+| **Sprint 0** | Fundações Críticas          | 60h      | 4      |
+| **Sprint 1** | Gestão de Usuários          | 60h      | 4      |
+| **Sprint 2** | Performance + Auditoria     | 60h      | 4      |
+| **Sprint 3** | Relatórios                  | 60h      | 4      |
+| **Sprint 4** | UX/UI + Filtros             | 60h      | 4      |
+| **Sprint 5** | Notificações                | 60h      | 4      |
+| **Sprint 6** | Auditoria + Config + Mobile | 60h      | 4      |
+| **Sprint 7** | Qualidade e Testes          | 60h      | 3      |
+| **TOTAL**    | -                           | **420h** | **31** |
 
 ### Duração Total
+
 - **8 sprints × 2 semanas = 16 semanas (4 meses)**
 - **Estimativa de conclusão**: ~4 meses de desenvolvimento
 
@@ -562,14 +611,17 @@
 1. **Flexibilidade**: As estimativas de horas são aproximadas. Ajuste conforme necessário durante as sprints.
 
 2. **Dependências Críticas**:
+
    - Sprint 0 é FUNDAMENTAL - não pule
    - Respeite as dependências indicadas entre features
 
 3. **Priorização Dinâmica**:
+
    - Se houver mudanças de negócio, repriorize os itens dentro das sprints
    - Mantenha a regra: fundação antes de features avançadas
 
 4. **Buffer**:
+
    - Cada sprint tem ~5-10h de buffer implícito para:
      - Code review pessoal
      - Refactoring
@@ -577,6 +629,7 @@
      - Aprendizado de novas libs
 
 5. **Definição de Pronto**:
+
    - Código implementado
    - TypeScript sem erros
    - Build de produção funcionando
