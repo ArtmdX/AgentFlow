@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -9,9 +10,25 @@ import { Textarea } from '@/components/ui/TextArea';
 import { CustomerFormData } from '@/types/database';
 import { ApiErrorDisplay } from '@/components/error/ApiErrorDisplay';
 import { ErrorResponse } from '@/lib/error-handler';
+import { validateCPFOrCNPJ, formatCPF, formatCNPJ, formatPhone, formatCEP } from '@/lib/validations/validators';
+import { DuplicateWarningModal } from '@/components/ui/DuplicateWarningModal';
+import { useCheckDuplicates } from '@/hooks/useCheckDuplicates';
+import { AlertCircle } from 'lucide-react';
+
+interface Duplicate {
+  field: string;
+  value: string;
+  customer: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string | null;
+    documentNumber: string | null;
+  };
+}
 
 interface CustomerFormProps {
-  onSubmit: (data: Customer) => void;
+  onSubmit: (data: Customer, override?: boolean) => void;
   isLoading: boolean;
   initialData?: Partial<CustomerFormData>;
   submitButtonText?: string;
@@ -29,13 +46,30 @@ export function CustomerForm({
   error,
   onClearError
 }: CustomerFormProps) {
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [detectedDuplicates, setDetectedDuplicates] = useState<Duplicate[]>([]);
+  const [pendingData, setPendingData] = useState<Customer | null>(null);
+
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors }
   } = useForm<CustomerFormData>({
-    defaultValues: initialData
+    defaultValues: initialData,
+  });
+
+  // Watch email and documentNumber for real-time duplicate checking
+  const watchEmail = watch('email');
+  const watchDocumentNumber = watch('documentNumber');
+
+  // Use the duplicate checking hook with debounce
+  const { duplicates: realtimeDuplicates, isChecking } = useCheckDuplicates({
+    email: watchEmail || undefined,
+    documentNumber: watchDocumentNumber || undefined,
+    excludeId: initialData.id,
+    debounceMs: 800,
   });
 
   const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
@@ -50,12 +84,68 @@ export function CustomerForm({
     }
   };
 
+  const handleDocumentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const cleanValue = value.replace(/\D/g, '');
+
+    let formattedValue = value;
+
+    // Aplica formatação baseado no tamanho
+    if (cleanValue.length <= 11) {
+      // CPF: 000.000.000-00
+      formattedValue = formatCPF(cleanValue);
+    } else if (cleanValue.length <= 14) {
+      // CNPJ: 00.000.000/0000-00
+      formattedValue = formatCNPJ(cleanValue);
+    }
+
+    setValue('documentNumber', formattedValue, { shouldValidate: true });
+  };
+
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = formatPhone(value);
+    setValue('phone', formattedValue, { shouldValidate: true });
+  };
+
+  const handleCepChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = formatCEP(value);
+    setValue('addressZipCode', formattedValue, { shouldValidate: true });
+  };
+
   const handleFormSubmit = (data: CustomerFormData) => {
     const apiData = {
       ...data,
       birthDate: data.birthDate ? new Date(data.birthDate) : null
     };
-    onSubmit(apiData as unknown as Customer);
+
+    // Check if there are real-time duplicates detected
+    if (realtimeDuplicates.length > 0) {
+      // Show modal for user confirmation
+      setDetectedDuplicates(realtimeDuplicates);
+      setPendingData(apiData as unknown as Customer);
+      setShowDuplicateModal(true);
+    } else {
+      // No duplicates, proceed with submission
+      onSubmit(apiData as unknown as Customer);
+    }
+  };
+
+  const handleOverrideDuplicates = () => {
+    // User confirmed to save anyway, proceed with submission with override flag
+    setShowDuplicateModal(false);
+    if (pendingData) {
+      onSubmit(pendingData, true); // Pass override = true
+    }
+    setPendingData(null);
+    setDetectedDuplicates([]);
+  };
+
+  const handleCloseDuplicateModal = () => {
+    setShowDuplicateModal(false);
+    setPendingData(null);
+    setDetectedDuplicates([]);
   };
 
   return (
@@ -95,13 +185,26 @@ export function CustomerForm({
               {...register('email', { required: 'O e-mail é obrigatório' })}
               error={errors.email?.message}
             />
+            {isChecking && watchEmail && (
+              <p className="mt-1 text-xs text-gray-500">Verificando duplicatas...</p>
+            )}
+            {!isChecking && realtimeDuplicates.some(d => d.field === 'email') && (
+              <div className="mt-1 flex items-center text-xs text-yellow-600">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Email já cadastrado
+              </div>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <Input
               label="Telefone *"
               type="tel"
-              {...register('phone', { required: 'O telefone é obrigatório' })}
+              placeholder="(00) 00000-0000"
+              {...register('phone', {
+                required: 'O telefone é obrigatório',
+                onChange: handlePhoneChange
+              })}
               error={errors.phone?.message}
             />
           </div>
@@ -122,7 +225,26 @@ export function CustomerForm({
           </div>
 
           <div className="sm:col-span-2">
-            <Input label="Número do Documento" {...register('documentNumber')} error={errors.documentNumber?.message} />
+            <Input
+              label="Número do Documento"
+              {...register('documentNumber', {
+                onChange: handleDocumentChange,
+                validate: (value) => {
+                  if (!value || value.trim() === '') return true;
+                  return validateCPFOrCNPJ(value) || 'CPF ou CNPJ inválido';
+                },
+              })}
+              error={errors.documentNumber?.message}
+            />
+            {isChecking && watchDocumentNumber && (
+              <p className="mt-1 text-xs text-gray-500">Verificando duplicatas...</p>
+            )}
+            {!isChecking && realtimeDuplicates.some(d => d.field === 'documentNumber') && (
+              <div className="mt-1 flex items-center text-xs text-yellow-600">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                CPF/CNPJ já cadastrado
+              </div>
+            )}
           </div>
 
           <div className="sm:col-span-1">
@@ -143,7 +265,14 @@ export function CustomerForm({
           </div>
 
           <div className="sm:col-span-1">
-            <Input label="CEP" {...register('addressZipCode')} onBlur={handleCepBlur} placeholder="Digite o CEP" />
+            <Input
+              label="CEP"
+              placeholder="00000-000"
+              {...register('addressZipCode', {
+                onChange: handleCepChange
+              })}
+              onBlur={handleCepBlur}
+            />
           </div>
 
           <div className="sm:col-span-4">
@@ -186,6 +315,14 @@ export function CustomerForm({
           {isLoading ? 'Salvando...' : submitButtonText}
         </button>
       </div>
+
+      {/* Modal de aviso de duplicatas */}
+      <DuplicateWarningModal
+        isOpen={showDuplicateModal}
+        duplicates={detectedDuplicates}
+        onClose={handleCloseDuplicateModal}
+        onOverride={handleOverrideDuplicates}
+      />
     </form>
   );
 }

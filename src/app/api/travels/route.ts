@@ -5,98 +5,118 @@ import { NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/authorization';
 import { Permission, hasPermission } from '@/lib/permissions';
 import { handleAPIError } from '@/lib/error-handler';
+import { logTravelCreated } from '@/services/activityService';
 
 export async function GET(request: Request) {
   try {
     const session = await getAuthSession();
-  const agentId = session.user.id;
-  const { searchParams } = new URL(request.url);
+    const agentId = session.user.id;
+    const { searchParams } = new URL(request.url);
 
-  // Extrair parâmetros de filtro
-  const status = searchParams.get('status');
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
-  const destination = searchParams.get('destination');
-  const customer = searchParams.get('customer');
-  const sortBy = searchParams.get('sortBy') || 'departureDate';
-  const sortOrder = searchParams.get('sortOrder') || 'desc';
+    // Parâmetros de paginação
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '25', 10);
+    const skip = (page - 1) * limit;
 
-  // Construir objeto where dinamicamente
-  const where: {
-    agentId?: string;
-    status?: travel_status;
-    departureDate?: {
-      gte?: Date;
-      lte?: Date;
+    // Extrair parâmetros de filtro
+    const status = searchParams.get('status');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const destination = searchParams.get('destination');
+    const customer = searchParams.get('customer');
+    const sortBy = searchParams.get('sortBy') || 'departureDate';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+
+    // Construir objeto where dinamicamente
+    const where: {
+      agentId?: string;
+      status?: travel_status;
+      departureDate?: {
+        gte?: Date;
+        lte?: Date;
+      };
+      destination?: {
+        contains: string;
+        mode: 'insensitive';
+      };
+      customer?: {
+        OR: Array<{
+          firstName?: { contains: string; mode: 'insensitive' };
+          lastName?: { contains: string; mode: 'insensitive' };
+        }>;
+      };
+    } = {
+      agentId: agentId
     };
-    destination?: {
-      contains: string;
-      mode: 'insensitive';
-    };
-    customer?: {
-      OR: Array<{
-        firstName?: { contains: string; mode: 'insensitive' };
-        lastName?: { contains: string; mode: 'insensitive' };
-      }>;
-    };
-  } = {
-    agentId: agentId
-  };
 
-  // Filtro de status
-  if (status) {
-    where.status = status as travel_status;
-  }
-
-  // Filtro de data
-  if (startDate || endDate) {
-    where.departureDate = {};
-    if (startDate) {
-      where.departureDate.gte = new Date(startDate);
+    // Filtro de status
+    if (status) {
+      where.status = status as travel_status;
     }
-    if (endDate) {
-      where.departureDate.lte = new Date(endDate);
-    }
-  }
 
-  // Filtro de destino
-  if (destination) {
-    where.destination = {
-      contains: destination,
-      mode: 'insensitive'
-    };
-  }
-
-  // Filtro de cliente
-  if (customer) {
-    where.customer = {
-      OR: [
-        { firstName: { contains: customer, mode: 'insensitive' } },
-        { lastName: { contains: customer, mode: 'insensitive' } }
-      ]
-    };
-  }
-
-  // Se tiver permissão de ver todas as viagens, não filtra por agentId
-  const canViewAll = hasPermission(session, Permission.VIEW_ALL_TRAVELS);
-  if (canViewAll) {
-    delete where.agentId;
-  }
-
-  const travels = await prisma.travel.findMany({
-    where,
-    include: {
-      customer: {
-        select: {
-          firstName: true,
-          lastName: true
-        }
+    // Filtro de data
+    if (startDate || endDate) {
+      where.departureDate = {};
+      if (startDate) {
+        where.departureDate.gte = new Date(startDate);
       }
-    },
-    orderBy: sortBy === 'customer' ? { customer: { firstName: sortOrder as 'asc' | 'desc' } } : { [sortBy]: sortOrder as 'asc' | 'desc' }
-  });
+      if (endDate) {
+        where.departureDate.lte = new Date(endDate);
+      }
+    }
 
-  return NextResponse.json(travels);
+    // Filtro de destino
+    if (destination) {
+      where.destination = {
+        contains: destination,
+        mode: 'insensitive'
+      };
+    }
+
+    // Filtro de cliente
+    if (customer) {
+      where.customer = {
+        OR: [
+          { firstName: { contains: customer, mode: 'insensitive' } },
+          { lastName: { contains: customer, mode: 'insensitive' } }
+        ]
+      };
+    }
+
+    // Se tiver permissão de ver todas as viagens, não filtra por agentId
+    const canViewAll = hasPermission(session, Permission.VIEW_ALL_TRAVELS);
+    if (canViewAll) {
+      delete where.agentId;
+    }
+
+    // Buscar travels com paginação e total
+    const [travels, total] = await Promise.all([
+      prisma.travel.findMany({
+        where,
+        include: {
+          customer: {
+            select: {
+              firstName: true,
+              lastName: true
+            }
+          }
+        },
+        orderBy: sortBy === 'customer' ? { customer: { firstName: sortOrder as 'asc' | 'desc' } } : { [sortBy]: sortOrder as 'asc' | 'desc' },
+        skip,
+        take: limit
+      }),
+      prisma.travel.count({ where })
+    ]);
+
+    return NextResponse.json({
+      travels,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     return handleAPIError(error);
   }
@@ -120,6 +140,11 @@ export async function POST(request: Request) {
       returnDate: validatedData.returnDate ? new Date(validatedData.returnDate) : null
     }
   });
+
+  // Log de criação da viagem (não bloqueia a resposta)
+  logTravelCreated(userId, newTravel.id, newTravel.title).catch(err =>
+    console.error('Erro ao criar log de atividade:', err)
+  );
 
   return NextResponse.json(newTravel, { status: 201 });
   } catch (error) {

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { paymentCreateSchema } from '@/lib/validations';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import { logPayment } from '@/services/activityService';
 
 // GET - Listar pagamentos de uma viagem
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -147,6 +148,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         status: newPaidValue >= totalValue ? 'confirmada' : travel.status
       }
     });
+
+    // Log de pagamento (não bloqueia)
+    logPayment(userId, travelId, amount, currency, paymentMethod).catch(err =>
+      console.error('Erro ao criar log de pagamento:', err)
+    );
 
     return NextResponse.json(payment, { status: 201 });
   } catch (error) {

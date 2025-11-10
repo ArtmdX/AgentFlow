@@ -25,9 +25,13 @@ export async function createCustomer(customerData: Omit<Customer, 'id'>): Promis
   }
 }
 
-export async function updateCustomer(customerId: string, customerData: Partial<Customer>): Promise<Customer | null> {
+export async function updateCustomer(customerId: string, customerData: Partial<Customer>, override?: boolean): Promise<Customer | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/customers/${customerId}`, {
+    const url = override
+      ? `${API_BASE_URL}/customers/${customerId}?override=true`
+      : `${API_BASE_URL}/customers/${customerId}`;
+
+    const response = await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

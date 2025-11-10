@@ -1,15 +1,46 @@
-import { getCustomers } from "@/services/customerServerService";
+'use client';
+
+import { useState } from "react";
 import { CustomerTable } from "@/components/customers/CustomerTable";
-import { PlusCircle, Users, MapPin, DollarSign } from "lucide-react";
+import { PlusCircle, Users, MapPin, DollarSign, Search } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
+import Pagination from "@/components/ui/Pagination";
+import { TableSkeleton } from "@/components/ui/Loading";
+import { useCustomers } from "@/hooks/useCustomers";
 
-export const dynamic = "force-dynamic";
+interface CustomerStats {
+  totalCustomers: number;
+  totalTravels: number;
+  totalRevenue: number;
+}
 
-export default async function CustomersPage() {
-  // 1. A chamada da API acontece no servidor, antes da página ser enviada para o browser.
-  const { customers, stats } = await getCustomers();
+export default function CustomersPage() {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [search, setSearch] = useState('');
+
+  // Usando React Query
+  const { data, isLoading, error } = useCustomers({ page, limit, search });
+
+  const customers = data?.customers || [];
+  const pagination = data?.pagination || { page: 1, limit: 25, total: 0, totalPages: 0 };
+  const stats = data?.stats || { totalCustomers: 0, totalTravels: 0, totalRevenue: 0 };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setPage(1);
+    setLimit(newLimit);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6">
@@ -67,8 +98,39 @@ export default async function CustomersPage() {
         </div>
       </div>
 
-      {/* 2. Passamos os dados já buscados como uma prop para o componente de tabela. */}
-      <CustomerTable initialCustomers={customers} />
+      {/* Busca */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Buscar por nome, email ou documento..."
+            value={search}
+            onChange={handleSearchChange}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      {/* Tabela */}
+      {isLoading ? (
+        <div className="bg-white rounded-lg shadow">
+          <TableSkeleton rows={10} cols={5} />
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <p className="text-red-600">Erro ao carregar clientes. Tente novamente.</p>
+        </div>
+      ) : (
+        <>
+          <CustomerTable initialCustomers={customers} />
+          <Pagination
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@
  */
 
 import { z } from 'zod';
+import { validateCPFOrCNPJ } from './validators';
 
 /**
  * Schema base para cliente (campos principais)
@@ -35,7 +36,18 @@ const baseCustomerSchema = {
   documentNumber: z
     .string()
     .max(50, 'Número de documento muito longo')
-    .optional(),
+    .optional()
+    .refine(
+      (val) => {
+        // Se não foi fornecido, é válido
+        if (!val || val.trim() === '') return true;
+        // Valida CPF ou CNPJ
+        return validateCPFOrCNPJ(val);
+      },
+      {
+        message: 'CPF ou CNPJ inválido',
+      }
+    ),
 
   birthDate: z
     .string()

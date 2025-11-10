@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { logTravelUpdated, logTravelStatusChange } from "@/services/activityService";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,8 +27,27 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         agentId: userId,
       },
       include: {
-        customer: true,
-        passengers: true,
+        customer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            documentNumber: true,
+            documentType: true,
+          }
+        },
+        passengers: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            documentNumber: true,
+            documentType: true,
+            birthDate: true,
+          }
+        },
       },
     });
 
@@ -93,10 +113,48 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       where: { id: travelId },
       data: updateData,
       include: {
-        customer: true,
-        passengers: true,
+        customer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            documentNumber: true,
+            documentType: true,
+          }
+        },
+        passengers: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            documentNumber: true,
+            documentType: true,
+            birthDate: true,
+          }
+        },
       },
     });
+
+    // Log de atualização (não bloqueia)
+    if (Object.keys(updateData).length > 0) {
+      // Se o status mudou, log específico de mudança de status
+      if (body.status !== undefined && existingTravel.status !== body.status) {
+        logTravelStatusChange(
+          userId,
+          travelId,
+          updatedTravel.title,
+          existingTravel.status || 'orcamento',
+          body.status
+        ).catch(err => console.error('Erro ao criar log de status:', err));
+      } else {
+        // Log genérico de atualização
+        logTravelUpdated(userId, travelId, updatedTravel.title, updateData).catch(err =>
+          console.error('Erro ao criar log de atualização:', err)
+        );
+      }
+    }
 
     return NextResponse.json(updatedTravel);
   } catch (error) {

@@ -16,12 +16,12 @@ export function CustomerEditForm({ customer }: CustomerEditFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleFormSubmit(data: Customer) {
+  async function handleFormSubmit(data: Customer, override?: boolean) {
     setLoading(true);
     setError(null);
 
     try {
-      await updateCustomer(customer.id!, data);
+      await updateCustomer(customer.id!, data, override);
 
       router.push(`/dashboard/customers/${customer.id}`);
       router.refresh();

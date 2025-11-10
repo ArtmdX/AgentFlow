@@ -58,10 +58,82 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const userId = session.user.id;
     const body: Partial<Customer> = await request.json();
+    const { searchParams } = new URL(request.url);
+    const override = searchParams.get('override') === 'true';
 
     // Validação com Zod
     const { customerUpdateSchema } = await import('@/lib/validations/customer');
     const validatedData = customerUpdateSchema.parse(body);
+
+    // Verificar duplicatas (excluindo o próprio cliente, apenas se não for override)
+    const duplicates: Array<{ field: string; value: string; customer: { id: string; firstName: string; lastName: string; email: string | null; documentNumber: string | null } }> = [];
+
+    // Verificar email duplicado
+    if (!override && validatedData.email) {
+      const existingByEmail = await prisma.customer.findFirst({
+        where: {
+          email: validatedData.email,
+          isActive: true,
+          createdById: userId,
+          id: { not: costumerId }, // Excluir o próprio cliente
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          documentNumber: true,
+        },
+      });
+
+      if (existingByEmail) {
+        duplicates.push({
+          field: 'email',
+          value: validatedData.email,
+          customer: existingByEmail,
+        });
+      }
+    }
+
+    // Verificar documento duplicado
+    if (!override && validatedData.documentNumber) {
+      const cleanDoc = validatedData.documentNumber.replace(/\D/g, '');
+      const existingByDocument = await prisma.customer.findFirst({
+        where: {
+          documentNumber: cleanDoc,
+          isActive: true,
+          createdById: userId,
+          id: { not: costumerId }, // Excluir o próprio cliente
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          documentNumber: true,
+        },
+      });
+
+      if (existingByDocument && !duplicates.find(d => d.customer.id === existingByDocument.id)) {
+        duplicates.push({
+          field: 'documentNumber',
+          value: cleanDoc,
+          customer: existingByDocument,
+        });
+      }
+    }
+
+    // Se houver duplicatas, retornar erro 409 com os dados
+    if (duplicates.length > 0) {
+      return NextResponse.json(
+        {
+          message: 'Cliente já cadastrado',
+          code: 'DUPLICATE_CUSTOMER',
+          duplicates,
+        },
+        { status: 409 }
+      );
+    }
 
     const updatedCustomer = await prisma.customer.update({
       where: {
@@ -71,6 +143,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       },
       data: {
         ...validatedData,
+        documentNumber: validatedData.documentNumber ? validatedData.documentNumber.replace(/\D/g, '') : undefined,
         updatedAt: new Date(),
         birthDate: validatedData.birthDate ? new Date(validatedData.birthDate) : null
       }

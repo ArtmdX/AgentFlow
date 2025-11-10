@@ -10,12 +10,13 @@ export default function NewCustomerPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleFormSubmit(data: Customer) {
+  async function handleFormSubmit(data: Customer, override?: boolean) {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/customers', {
+      const url = override ? '/api/customers?override=true' : '/api/customers';
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

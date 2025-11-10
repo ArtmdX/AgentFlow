@@ -33,14 +33,17 @@ export function TravelForm({ customerId }: TravelFormProps) {
     setIsLoading(true);
     setApiError(null);
     try {
-      const dataForApi = {
-        ...data,
+      const dataForApi: Record<string, unknown> = {
+        title: data.title,
+        destination: data.destination,
+        departureCity: data.departureCity,
+        departureDate: data.departureDate,
+        returnDate: data.returnDate || undefined,
+        totalValue: data.totalValue ? parseFloat(data.totalValue.toString()) : undefined,
         customerId,
-        departureDate: new Date(data.departureDate),
-        returnDate: data.returnDate ? new Date(data.returnDate) : null
       };
 
-      await createTravel(dataForApi);
+      await createTravel(dataForApi as Partial<Travel>);
       router.push(`/dashboard/customers/${customerId}`);
       router.refresh();
     } catch (error: unknown) {
