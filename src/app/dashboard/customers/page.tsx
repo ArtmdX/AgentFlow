@@ -10,12 +10,6 @@ import Pagination from "@/components/ui/Pagination";
 import { TableSkeleton } from "@/components/ui/Loading";
 import { useCustomers } from "@/hooks/useCustomers";
 
-interface CustomerStats {
-  totalCustomers: number;
-  totalTravels: number;
-  totalRevenue: number;
-}
-
 export default function CustomersPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);

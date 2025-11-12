@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, Suspense } from 'react';
+import { useState, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TravelTable } from "@/components/travels/TravelTable";
 import TravelFilters, { TravelFiltersState } from "@/components/travels/TravelFilters";

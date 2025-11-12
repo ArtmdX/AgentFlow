@@ -220,14 +220,14 @@
 - **IDs**: Epic 126, Feature 137, US-2.1 (#166)
 - **Descrição**: Relatório detalhado de vendas e conversões
 - **Entregas**:
-  - Página `/reports/sales`
-  - Filtros: período, agente, status, destino
-  - Métricas: total de viagens, valor total, ticket médio
-  - Gráfico de vendas por período (linha/barra)
-  - Gráfico de vendas por agente (pizza)
-  - Top destinos
-  - Taxa de conversão (leads → vendas)
-  - Exportação para CSV/PDF
+  - Página `/reports/sales` (2h)
+  - Filtros: período, agente, status, destino (2h)
+  - Métricas: total de viagens, valor total, ticket médio (2h)
+  - Gráfico de vendas por período (linha/barra) (3h)
+  - Gráfico de vendas por agente (pizza) (2h)
+  - Top destinos (1h)
+  - Taxa de conversão (leads → vendas) (2h)
+  - Exportação para CSV/PDF (2h)
 - **Dependências**: Cache (Sprint 2), Paginação (Sprint 2)
 
 #### 2. Relatório de Pagamentos (16h)
@@ -235,14 +235,14 @@
 - **IDs**: Epic 126, Feature 138, US-2.2 (#167)
 - **Descrição**: Análise financeira de pagamentos
 - **Entregas**:
-  - Página `/reports/payments`
-  - Filtros: período, moeda, método de pagamento, status
-  - Métricas: total recebido, a receber, inadimplência
-  - Gráfico de fluxo de caixa
-  - Pagamentos por método (pizza)
-  - Aging de recebíveis (0-30, 30-60, 60-90 dias)
-  - Lista de pendências
-  - Exportação para CSV/Excel
+  - Página `/reports/payments` (2h)
+  - Filtros: período, moeda, método de pagamento, status (2h)
+  - Métricas: total recebido, a receber, inadimplência (2h)
+  - Gráfico de fluxo de caixa (3h)
+  - Pagamentos por método (pizza) (2h)
+  - Aging de recebíveis (0-30, 30-60, 60-90 dias) (2h)
+  - Lista de pendências (1h)
+  - Exportação para CSV/Excel (2h)
 - **Dependências**: Cache (Sprint 2), Paginação (Sprint 2)
 
 #### 3. Dashboard Avançado (18h)
@@ -250,15 +250,15 @@
 - **IDs**: Epic 126, Feature 139, US-2.3 (#168)
 - **Descrição**: Dashboard executivo com KPIs principais
 - **Entregas**:
-  - Refactor do dashboard atual
-  - Cards de KPIs: vendas do mês, crescimento, conversão
-  - Gráfico de vendas últimos 12 meses
-  - Gráfico de pagamentos (realizado vs planejado)
-  - Top 5 clientes
-  - Top 5 destinos
-  - Atividades recentes
-  - Viagens próximas de partida
-  - Filtro por período customizável
+  - Refactor do dashboard atual (2h)
+  - Cards de KPIs: vendas do mês, crescimento, conversão (3h)
+  - Gráfico de vendas últimos 12 meses (3h)
+  - Gráfico de pagamentos (realizado vs planejado) (3h)
+  - Top 5 clientes (2h)
+  - Top 5 destinos (1h)
+  - Atividades recentes (1h)
+  - Viagens próximas de partida (2h)
+  - Filtro por período customizável (1h)
 - **Dependências**: Relatório de Vendas, Relatório de Pagamentos
 
 #### 4. Cálculos Automáticos (10h)
@@ -266,12 +266,12 @@
 - **IDs**: Epic 130, Feature 153, US-6.3 (#182)
 - **Descrição**: Automação de cálculos em viagens e pagamentos
 - **Entregas**:
-  - Cálculo automático de saldo (totalValue - paidValue)
-  - Atualização de status da viagem baseado em pagamentos
-  - Cálculo de juros/multas em atrasos (configurável)
-  - Desconto automático (porcentagem ou valor fixo)
-  - Conversão de moedas (API externa ou taxas manuais)
-  - Recálculo em tempo real no frontend
+  - Cálculo automático de saldo (totalValue - paidValue) (1h)
+  - Atualização de status da viagem baseado em pagamentos (2h)
+  - Cálculo de juros/multas em atrasos (configurável) (2h)
+  - Desconto automático (porcentagem ou valor fixo) (2h)
+  - Conversão de moedas (API externa ou taxas manuais) (2h)
+  - Recálculo em tempo real no frontend (1h)
 - **Dependências**: Validações (Sprint 0)
 
 ### Critérios de Aceite da Sprint
@@ -297,13 +297,13 @@
 - **IDs**: Epic 129, Feature 146, US-5.1 (#175)
 - **Descrição**: Busca unificada em toda aplicação
 - **Entregas**:
-  - Input de busca global no header/navbar
-  - Busca em: clientes, viagens, passageiros, pagamentos
-  - Autocomplete com resultados em tempo real
-  - Destacar termo buscado nos resultados
-  - Navegação por teclado (arrow keys, enter)
-  - Histórico de buscas recentes
-  - Atalho de teclado (Ctrl+K / Cmd+K)
+  - Input de busca global no header/navbar (2h)
+  - Busca em: clientes, viagens, passageiros, pagamentos (4h)
+  - Autocomplete com resultados em tempo real (3h)
+  - Destacar termo buscado nos resultados (2h)
+  - Navegação por teclado (arrow keys, enter) (2h)
+  - Histórico de buscas recentes (2h)
+  - Atalho de teclado (Ctrl+K / Cmd+K) (1h)
 - **Dependências**: Cache (Sprint 2)
 
 #### 2. Filtros Avançados - Viagens (14h)
@@ -311,13 +311,13 @@
 - **IDs**: Epic 129, US-5.2 (#176)
 - **Descrição**: Sistema de filtros robusto para listagem de viagens
 - **Entregas**:
-  - Filtros por: status, período de partida, destino, cliente
-  - Filtros por: agente responsável, valor (range), passageiros
-  - Múltiplos filtros simultâneos
-  - Persistência de filtros na URL
-  - Badge de filtros ativos
-  - Botão de limpar filtros
-  - Salvar filtros favoritos (opcional)
+  - Filtros por: status, período de partida, destino, cliente (3h)
+  - Filtros por: agente responsável, valor (range), passageiros (3h)
+  - Múltiplos filtros simultâneos (2h)
+  - Persistência de filtros na URL (2h)
+  - Badge de filtros ativos (1h)
+  - Botão de limpar filtros (1h)
+  - Salvar filtros favoritos (opcional) (2h)
 - **Dependências**: Paginação (Sprint 2)
 
 #### 3. Filtros Avançados - Clientes (12h)
@@ -325,12 +325,12 @@
 - **IDs**: Epic 129, Feature 148, US-5.3 (#177)
 - **Descrição**: Filtros para listagem de clientes
 - **Entregas**:
-  - Filtros por: nome, CPF/CNPJ, e-mail, telefone
-  - Filtros por: cidade, estado, país
-  - Filtros por: data de cadastro, última viagem
-  - Status: ativo, inativo
-  - Ordenação customizável
-  - Persistência na URL
+  - Filtros por: nome, CPF/CNPJ, e-mail, telefone (3h)
+  - Filtros por: cidade, estado, país (2h)
+  - Filtros por: data de cadastro, última viagem (2h)
+  - Status: ativo, inativo (1h)
+  - Ordenação customizável (2h)
+  - Persistência na URL (2h)
 - **Dependências**: Paginação (Sprint 2)
 
 #### 4. Exportação de Dados (10h)
@@ -338,14 +338,14 @@
 - **IDs**: Epic 129, Feature 149, US-5.4 (#178)
 - **Descrição**: Exportar dados em múltiplos formatos
 - **Entregas**:
-  - Exportação de viagens para CSV/Excel/PDF
-  - Exportação de clientes para CSV/Excel
-  - Exportação de pagamentos para CSV/Excel
-  - Exportação de relatórios para PDF
-  - Respeitar filtros aplicados na exportação
-  - Formatação adequada (datas, moedas)
-  - Download assíncrono para grandes volumes
-  - Progress bar durante exportação
+  - Exportação de viagens para CSV/Excel/PDF (2h)
+  - Exportação de clientes para CSV/Excel (1h)
+  - Exportação de pagamentos para CSV/Excel (1h)
+  - Exportação de relatórios para PDF (2h)
+  - Respeitar filtros aplicados na exportação (1h)
+  - Formatação adequada (datas, moedas) (1h)
+  - Download assíncrono para grandes volumes (1h)
+  - Progress bar durante exportação (1h)
 - **Dependências**: Filtros Avançados
 
 #### 5. Autocomplete de Cidades com IATA (8h) ✅ CONCLUÍDO
@@ -387,14 +387,14 @@
 - **IDs**: Epic 127, Feature 140, US-3.1 (#169)
 - **Descrição**: Sistema de notificações dentro da aplicação
 - **Entregas**:
-  - Tabela `Notification` no schema Prisma
-  - Bell icon com badge de não lidas
-  - Dropdown/modal com lista de notificações
-  - Tipos: info, warning, success, error
-  - Ações: marcar como lida, deletar
-  - Link para entidade relacionada
-  - Tempo relativo ("há 5 minutos")
-  - Notificações em tempo real (polling ou websocket)
+  - Tabela `Notification` no schema Prisma (1h)
+  - Bell icon com badge de não lidas (2h)
+  - Dropdown/modal com lista de notificações (3h)
+  - Tipos: info, warning, success, error (1h)
+  - Ações: marcar como lida, deletar (2h)
+  - Link para entidade relacionada (2h)
+  - Tempo relativo ("há 5 minutos") (1h)
+  - Notificações em tempo real (polling ou websocket) (4h)
 - **Dependências**: Log de Atividades (Sprint 2)
 
 #### 2. Envio de E-mails (18h)
@@ -402,14 +402,14 @@
 - **IDs**: Epic 127, Feature 141, US-3.2 (#170)
 - **Descrição**: Infraestrutura de envio de e-mails transacionais
 - **Entregas**:
-  - Integração com Resend ou Nodemailer
-  - Templates base em React Email ou MJML
-  - E-mails de: boas-vindas, reset senha, confirmação
-  - E-mails de: nova viagem, pagamento recebido, lembrete
-  - Fila de e-mails (opcional: Bull/Redis)
-  - Retry em caso de falha
-  - Log de e-mails enviados
-  - Configuração de SMTP nas settings
+  - Integração com Resend ou Nodemailer (2h)
+  - Templates base em React Email ou MJML (3h)
+  - E-mails de: boas-vindas, reset senha, confirmação (3h)
+  - E-mails de: nova viagem, pagamento recebido, lembrete (3h)
+  - Fila de e-mails (opcional: Bull/Redis) (3h)
+  - Retry em caso de falha (1h)
+  - Log de e-mails enviados (2h)
+  - Configuração de SMTP nas settings (1h)
 - **Dependências**: Templates de E-mail, Tratamento de Erros (Sprint 0)
 
 #### 3. Lembretes e Alertas (14h)
@@ -417,14 +417,14 @@
 - **IDs**: Epic 127, Feature 142, US-3.3 (#171)
 - **Descrição**: Sistema de lembretes automáticos
 - **Entregas**:
-  - Cron jobs para verificações periódicas
-  - Alertas de: viagem próxima (7 dias antes)
-  - Alertas de: pagamento vencendo (3 dias antes)
-  - Alertas de: pagamento atrasado
-  - Alertas de: documentos pendentes
-  - Notificações in-app + e-mail
-  - Configuração de preferências por usuário
-  - Dashboard de lembretes pendentes
+  - Cron jobs para verificações periódicas (2h)
+  - Alertas de: viagem próxima (7 dias antes) (2h)
+  - Alertas de: pagamento vencendo (3 dias antes) (2h)
+  - Alertas de: pagamento atrasado (2h)
+  - Alertas de: documentos pendentes (2h)
+  - Notificações in-app + e-mail (1h)
+  - Configuração de preferências por usuário (2h)
+  - Dashboard de lembretes pendentes (1h)
 - **Dependências**: Notificações In-App, Envio de E-mails
 
 #### 4. Templates de E-mail (12h)
@@ -432,13 +432,13 @@
 - **IDs**: Epic 133, Feature 162, US-9.2 (#191)
 - **Descrição**: Editor e gestão de templates de e-mail
 - **Entregas**:
-  - Página `/admin/email-templates`
-  - Templates pré-configurados customizáveis
-  - Editor visual ou markdown
-  - Variáveis dinâmicas ({customerName}, {travelDate})
-  - Preview de template
-  - Versionamento de templates
-  - Ativação/desativação por tipo de e-mail
+  - Página `/admin/email-templates` (2h)
+  - Templates pré-configurados customizáveis (2h)
+  - Editor visual ou markdown (3h)
+  - Variáveis dinâmicas ({customerName}, {travelDate}) (2h)
+  - Preview de template (1h)
+  - Versionamento de templates (1h)
+  - Ativação/desativação por tipo de e-mail (1h)
 - **Dependências**: Permissões (Sprint 0)
 
 ### Critérios de Aceite da Sprint
@@ -464,14 +464,14 @@
 - **IDs**: Epic 128, Feature 145, US-4.3 (#174)
 - **Descrição**: Relatório completo de auditoria para compliance
 - **Entregas**:
-  - Página `/reports/audit`
-  - Filtros: período, usuário, tipo de ação, entidade
-  - Listagem detalhada de todas as atividades
-  - Detalhes: quem, quando, o quê, onde (IP), antes/depois
-  - Exportação para CSV/PDF
-  - Busca por ID de registro específico
-  - Gráficos de atividade por período
-  - Paginação e performance otimizada
+  - Página `/reports/audit` (2h)
+  - Filtros: período, usuário, tipo de ação, entidade (2h)
+  - Listagem detalhada de todas as atividades (2h)
+  - Detalhes: quem, quando, o quê, onde (IP), antes/depois (2h)
+  - Exportação para CSV/PDF (2h)
+  - Busca por ID de registro específico (1h)
+  - Gráficos de atividade por período (2h)
+  - Paginação e performance otimizada (1h)
 - **Dependências**: Log de Atividades (Sprint 2), Exportação (Sprint 4)
 
 #### 2. Configurações da Agência (18h)
@@ -479,15 +479,15 @@
 - **IDs**: Epic 133, Feature 161, US-9.1 (#190)
 - **Descrição**: Página de configurações gerais do sistema
 - **Entregas**:
-  - Página `/admin/settings`
-  - Dados da agência: nome, logo, endereço, contatos
-  - Configurações de e-mail: SMTP, sender
-  - Configurações de moeda padrão
-  - Configurações de juros/multas
-  - Taxas de conversão de moeda
-  - Configurações de notificações
-  - Termos de uso e políticas
-  - Backup de configurações
+  - Página `/admin/settings` (2h)
+  - Dados da agência: nome, logo, endereço, contatos (3h)
+  - Configurações de e-mail: SMTP, sender (2h)
+  - Configurações de moeda padrão (1h)
+  - Configurações de juros/multas (2h)
+  - Taxas de conversão de moeda (2h)
+  - Configurações de notificações (2h)
+  - Termos de uso e políticas (2h)
+  - Backup de configurações (2h)
 - **Dependências**: Permissões (Sprint 0)
 
 #### 3. Responsividade Mobile (20h)
@@ -495,24 +495,24 @@
 - **IDs**: Epic 131, Feature 157, US-7.3 (#186)
 - **Descrição**: Adaptar toda aplicação para dispositivos móveis
 - **Entregas**:
-  - Layout responsivo em todos os breakpoints
-  - Menu mobile com drawer/hamburger
-  - Tables responsivas (horizontal scroll ou cards)
-  - Formulários otimizados para mobile
-  - Touch-friendly (botões, inputs)
-  - Testes em: iPhone, Android, tablets
-  - PWA manifest (opcional)
-  - Performance em conexões 3G
+  - Layout responsivo em todos os breakpoints (3h)
+  - Menu mobile com drawer/hamburger (3h)
+  - Tables responsivas (horizontal scroll ou cards) (4h)
+  - Formulários otimizados para mobile (3h)
+  - Touch-friendly (botões, inputs) (2h)
+  - Testes em: iPhone, Android, tablets (2h)
+  - PWA manifest (opcional) (2h)
+  - Performance em conexões 3G (1h)
 - **Dependências**: Todas as features principais implementadas
 
 #### 4. Testes Manuais e Ajustes (8h)
 
 - **Descrição**: Buffer para testes e correções
 - **Entregas**:
-  - Testes exploratórios em todas as features
-  - Correção de bugs encontrados
-  - Ajustes de UX/UI
-  - Documentação de issues conhecidas
+  - Testes exploratórios em todas as features (3h)
+  - Correção de bugs encontrados (3h)
+  - Ajustes de UX/UI (1h)
+  - Documentação de issues conhecidas (1h)
 
 ### Critérios de Aceite da Sprint
 
@@ -536,15 +536,15 @@
 - **IDs**: Epic 132, Feature 158, US-8.1 (#187)
 - **Descrição**: Suite de testes unitários
 - **Entregas**:
-  - Setup de Jest + Testing Library
-  - Testes de utils e helpers (100% coverage)
-  - Testes de validações Zod
-  - Testes de componentes críticos
-  - Testes de hooks customizados
-  - Testes de formatters e parsers
-  - Testes de cálculos automáticos
-  - CI pipeline para rodar testes
-  - Coverage report (mínimo 70%)
+  - Setup de Jest + Testing Library (2h)
+  - Testes de utils e helpers (100% coverage) (4h)
+  - Testes de validações Zod (3h)
+  - Testes de componentes críticos (8h)
+  - Testes de hooks customizados (3h)
+  - Testes de formatters e parsers (3h)
+  - Testes de cálculos automáticos (4h)
+  - CI pipeline para rodar testes (2h)
+  - Coverage report (mínimo 70%) (1h)
 - **Dependências**: Todas as features implementadas
 
 #### 2. Testes de Integração (API) (25h)
@@ -552,29 +552,29 @@
 - **IDs**: Epic 132, Feature 159, US-8.2 (#188)
 - **Descrição**: Testes de integração das APIs
 - **Entregas**:
-  - Setup de testes de API (Jest + Supertest ou similar)
-  - Database de testes (SQLite ou Postgres test)
-  - Testes de endpoints críticos:
-    - `/api/auth/*` (login, logout, session)
-    - `/api/customers` (CRUD)
-    - `/api/travels` (CRUD)
-    - `/api/payments` (CRUD e cálculos)
-    - `/api/dashboard/stats`
-  - Testes de autorização e permissões
-  - Testes de validação server-side
-  - Seed de dados de teste
-  - Teardown após cada teste
+  - Setup de testes de API (Jest + Supertest ou similar) (2h)
+  - Database de testes (SQLite ou Postgres test) (2h)
+  - Testes de endpoints críticos: (12h)
+    - `/api/auth/*` (login, logout, session) (3h)
+    - `/api/customers` (CRUD) (2h)
+    - `/api/travels` (CRUD) (3h)
+    - `/api/payments` (CRUD e cálculos) (3h)
+    - `/api/dashboard/stats` (1h)
+  - Testes de autorização e permissões (3h)
+  - Testes de validação server-side (3h)
+  - Seed de dados de teste (2h)
+  - Teardown após cada teste (1h)
 - **Dependências**: Todas as features implementadas
 
 #### 3. Estabilização e Documentação (5h)
 
 - **Descrição**: Últimos ajustes e documentação
 - **Entregas**:
-  - Atualização do README.md
-  - Documentação de APIs
-  - Guia de deployment
-  - Changelog das sprints
-  - Known issues e roadmap futuro
+  - Atualização do README.md (1h)
+  - Documentação de APIs (1h)
+  - Guia de deployment (1h)
+  - Changelog das sprints (1h)
+  - Known issues e roadmap futuro (1h)
 
 ### Critérios de Aceite da Sprint
 

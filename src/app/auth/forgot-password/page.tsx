@@ -55,12 +55,9 @@ export default function ForgotPasswordPage() {
             <p className="mt-2 text-sm text-gray-600">
               Verifique sua caixa de entrada e spam.
             </p>
-            <div className="mt-2 p-3 bg-blue-50 rounded-md">
-              <p className="text-xs text-blue-700">
-                <strong>Desenvolvimento:</strong> O token foi logado no console do servidor.
-                Em produção, um email será enviado.
-              </p>
-            </div>
+            <p className="mt-4 text-xs text-gray-500">
+              O link de recuperação expira em 1 hora por segurança.
+            </p>
           </div>
 
           <div className="mt-6">
