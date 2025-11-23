@@ -86,44 +86,42 @@ export async function GET() {
       })
     ]);
 
-    // Dados para gráfico mensal (últimos 6 meses)
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    // Dados para gráfico mensal (últimos 12 meses)
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
 
-    const monthlyStats = await prisma.travel.groupBy({
-      by: ['createdAt'],
+    const travelsForMonthly = await prisma.travel.findMany({
       where: {
         agentId: userId,
-        createdAt: {
-          gte: sixMonthsAgo
+        createdDate: {
+          gte: twelveMonthsAgo
         }
       },
-      _count: {
-        id: true
-      },
-      _sum: {
+      select: {
+        createdDate: true,
         totalValue: true,
         paidValue: true
       }
     });
 
     // Processar dados mensais
-    const monthlyData = Array.from({ length: 6 }, (_, i) => {
+    const monthlyData = Array.from({ length: 12 }, (_, i) => {
       const date = new Date();
-      date.setMonth(date.getMonth() - (5 - i));
+      date.setMonth(date.getMonth() - (11 - i));
       const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
-      const monthStats = monthlyStats.filter(stat => {
-        if (!stat.createdAt) return false;
-        const statDate = new Date(stat.createdAt);
-        const statMonthYear = `${statDate.getFullYear()}-${String(statDate.getMonth() + 1).padStart(2, '0')}`;
-        return statMonthYear === monthYear;
+      const monthTravels = travelsForMonthly.filter(travel => {
+        if (!travel.createdDate) return false;
+        const travelDate = new Date(travel.createdDate);
+        const travelMonthYear = `${travelDate.getFullYear()}-${String(travelDate.getMonth() + 1).padStart(2, '0')}`;
+        return travelMonthYear === monthYear;
       });
 
       return {
-        month: date.toLocaleDateString('pt-BR', { month: 'short' }),
-        travels: monthStats.reduce((sum, stat) => sum + stat._count.id, 0),
-        revenue: monthStats.reduce((sum, stat) => sum + (stat._sum.paidValue?.toNumber() || 0), 0)
+        month: date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+        travels: monthTravels.length,
+        revenue: monthTravels.reduce((sum, travel) => sum + (travel.totalValue?.toNumber() || 0), 0),
+        paid: monthTravels.reduce((sum, travel) => sum + (travel.paidValue?.toNumber() || 0), 0)
       };
     });
 
@@ -152,6 +150,104 @@ export async function GET() {
       count: stat._count.id
     }));
 
+    // Top 5 clientes por receita
+    const allTravelsWithCustomer = await prisma.travel.findMany({
+      where: {
+        agentId: userId
+      },
+      select: {
+        customerId: true,
+        totalValue: true,
+        customer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true
+          }
+        }
+      }
+    });
+
+    const customerRevenue: Record<string, { customerId: string; customerName: string; revenue: number; travelCount: number }> = {};
+
+    allTravelsWithCustomer.forEach(travel => {
+      const customerId = travel.customerId;
+      if (!customerRevenue[customerId]) {
+        customerRevenue[customerId] = {
+          customerId,
+          customerName: `${travel.customer.firstName} ${travel.customer.lastName}`,
+          revenue: 0,
+          travelCount: 0
+        };
+      }
+      customerRevenue[customerId].revenue += travel.totalValue?.toNumber() || 0;
+      customerRevenue[customerId].travelCount++;
+    });
+
+    const topCustomers = Object.values(customerRevenue)
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
+
+    // Top 5 destinos
+    const destinationStats: Record<string, { destination: string; count: number; revenue: number }> = {};
+
+    const travelsWithDestination = await prisma.travel.findMany({
+      where: {
+        agentId: userId
+      },
+      select: {
+        destination: true,
+        totalValue: true
+      }
+    });
+
+    travelsWithDestination.forEach(travel => {
+      const dest = travel.destination;
+      if (!destinationStats[dest]) {
+        destinationStats[dest] = {
+          destination: dest,
+          count: 0,
+          revenue: 0
+        };
+      }
+      destinationStats[dest].count++;
+      destinationStats[dest].revenue += travel.totalValue?.toNumber() || 0;
+    });
+
+    const topDestinations = Object.values(destinationStats)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // Próximas partidas (próximos 30 dias)
+    const today = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+    const upcomingDepartures = await prisma.travel.findMany({
+      where: {
+        agentId: userId,
+        departureDate: {
+          gte: today,
+          lte: thirtyDaysFromNow
+        },
+        status: {
+          in: ['confirmada', 'em_andamento']
+        }
+      },
+      include: {
+        customer: {
+          select: {
+            firstName: true,
+            lastName: true
+          }
+        }
+      },
+      orderBy: {
+        departureDate: 'asc'
+      },
+      take: 10
+    });
+
     return NextResponse.json({
       overview: {
         totalCustomers,
@@ -170,7 +266,19 @@ export async function GET() {
         totalValue: travel.totalValue?.toNumber() || 0
       })),
       monthlyData,
-      statusDistribution
+      statusDistribution,
+      topCustomers,
+      topDestinations,
+      upcomingDepartures: upcomingDepartures.map(travel => ({
+        id: travel.id,
+        title: travel.title,
+        customer: `${travel.customer.firstName} ${travel.customer.lastName}`,
+        destination: travel.destination,
+        departureDate: travel.departureDate,
+        status: travel.status,
+        totalValue: travel.totalValue?.toNumber() || 0,
+        paidValue: travel.paidValue?.toNumber() || 0
+      }))
     });
 
   } catch (error) {

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { paymentUpdateSchema } from '@/lib/validations';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import { updateTravelStatusBasedOnPayments } from '@/lib/calculations';
 
 // GET - Buscar pagamento específico
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -160,16 +161,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       });
 
       const newPaidValue = totalPaid._sum.amount?.toNumber() || 0;
-      const totalValue = existingPayment.travel.totalValue?.toNumber() || 0;
 
       await prisma.travel.update({
         where: { id: existingPayment.travelId },
         data: {
-          paidValue: newPaidValue,
-          status: newPaidValue >= totalValue ? 'confirmada' :
-                 newPaidValue > 0 ? 'aguardando_pagamento' : 'orcamento'
+          paidValue: newPaidValue
         }
       });
+
+      // Atualizar status automaticamente
+      await updateTravelStatusBasedOnPayments(existingPayment.travelId).catch(err =>
+        console.error('Erro ao atualizar status da viagem:', err)
+      );
     }
 
     return NextResponse.json(updatedPayment);
@@ -225,16 +228,18 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     });
 
     const newPaidValue = totalPaid._sum.amount?.toNumber() || 0;
-    const totalValue = existingPayment.travel.totalValue?.toNumber() || 0;
 
     await prisma.travel.update({
       where: { id: existingPayment.travelId },
       data: {
-        paidValue: newPaidValue,
-        status: newPaidValue >= totalValue ? 'confirmada' :
-               newPaidValue > 0 ? 'aguardando_pagamento' : 'orcamento'
+        paidValue: newPaidValue
       }
     });
+
+    // Atualizar status automaticamente
+    await updateTravelStatusBasedOnPayments(existingPayment.travelId).catch(err =>
+      console.error('Erro ao atualizar status da viagem:', err)
+    );
 
     return NextResponse.json({ message: 'Pagamento excluído com sucesso' });
   } catch (error) {

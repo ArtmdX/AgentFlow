@@ -4,6 +4,7 @@ import { paymentCreateSchema } from '@/lib/validations';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { logPayment } from '@/services/activityService';
+import { updateTravelStatusBasedOnPayments } from '@/lib/calculations';
 
 // GET - Listar pagamentos de uma viagem
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -143,11 +144,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     await prisma.travel.update({
       where: { id: travelId },
       data: {
-        paidValue: newPaidValue,
-        // Atualizar status se necessário
-        status: newPaidValue >= totalValue ? 'confirmada' : travel.status
+        paidValue: newPaidValue
       }
     });
+
+    // Atualizar status automaticamente baseado nos pagamentos
+    await updateTravelStatusBasedOnPayments(travelId).catch(err =>
+      console.error('Erro ao atualizar status da viagem:', err)
+    );
 
     // Log de pagamento (não bloqueia)
     logPayment(userId, travelId, amount, currency, paymentMethod).catch(err =>
