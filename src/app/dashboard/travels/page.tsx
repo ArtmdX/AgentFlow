@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useCallback, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useCallback, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { TravelTable } from "@/components/travels/TravelTable";
 import TravelFilters, { TravelFiltersState } from "@/components/travels/TravelFilters";
-import { PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import Link from 'next/link';
-import { useTravels } from '@/hooks/useTravels';
+import { useTravels } from "@/hooks/useTravels";
 
 function TravelsPageContent() {
   const router = useRouter();
@@ -15,18 +12,18 @@ function TravelsPageContent() {
 
   // Inicializar filtros a partir da URL
   const [filters, setFilters] = useState<TravelFiltersState>({
-    status: searchParams.get('status') || undefined,
-    startDate: searchParams.get('startDate') || undefined,
-    endDate: searchParams.get('endDate') || undefined,
-    destination: searchParams.get('destination') || undefined,
-    customer: searchParams.get('customer') || undefined,
-    sortBy: searchParams.get('sortBy') || 'departureDate',
-    sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc'
+    status: searchParams.get("status") || undefined,
+    startDate: searchParams.get("startDate") || undefined,
+    endDate: searchParams.get("endDate") || undefined,
+    destination: searchParams.get("destination") || undefined,
+    customer: searchParams.get("customer") || undefined,
+    sortBy: searchParams.get("sortBy") || "departureDate",
+    sortOrder: (searchParams.get("sortOrder") as "asc" | "desc") || "desc",
   });
 
   // Estado de paginação
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10));
-  const [limit, setLimit] = useState(parseInt(searchParams.get('limit') || '25', 10));
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [limit, setLimit] = useState(parseInt(searchParams.get("limit") || "25", 10));
 
   // React Query para buscar viagens
   const { data, isLoading, error } = useTravels({
@@ -41,39 +38,45 @@ function TravelsPageContent() {
     page: 1,
     limit: 25,
     total: 0,
-    totalPages: 0
+    totalPages: 0,
   };
 
   // Sincronizar filtros e paginação com a URL
-  const updateURL = useCallback((newFilters: TravelFiltersState, newPage?: number, newLimit?: number) => {
-    const params = new URLSearchParams();
+  const updateURL = useCallback(
+    (newFilters: TravelFiltersState, newPage?: number, newLimit?: number) => {
+      const params = new URLSearchParams();
 
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value !== undefined && value !== '') {
-        params.set(key, value);
-      }
-    });
+      Object.entries(newFilters).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") {
+          params.set(key, value);
+        }
+      });
 
-    // Adicionar parâmetros de paginação
-    params.set('page', (newPage || page).toString());
-    params.set('limit', (newLimit || limit).toString());
+      // Adicionar parâmetros de paginação
+      params.set("page", (newPage || page).toString());
+      params.set("limit", (newLimit || limit).toString());
 
-    const queryString = params.toString();
-    router.push(`/dashboard/travels${queryString ? `?${queryString}` : ''}`, { scroll: false });
-  }, [router, page, limit]);
+      const queryString = params.toString();
+      router.push(`/dashboard/travels${queryString ? `?${queryString}` : ""}`, { scroll: false });
+    },
+    [router, page, limit]
+  );
 
   // Atualizar filtros (resetar para página 1)
-  const handleFilterChange = useCallback((newFilters: TravelFiltersState) => {
-    setFilters(newFilters);
-    setPage(1);
-    updateURL(newFilters, 1, limit);
-  }, [updateURL, limit]);
+  const handleFilterChange = useCallback(
+    (newFilters: TravelFiltersState) => {
+      setFilters(newFilters);
+      setPage(1);
+      updateURL(newFilters, 1, limit);
+    },
+    [updateURL, limit]
+  );
 
   // Limpar filtros
   const handleClearFilters = useCallback(() => {
     const clearedFilters: TravelFiltersState = {
-      sortBy: 'departureDate',
-      sortOrder: 'desc'
+      sortBy: "departureDate",
+      sortOrder: "desc",
     };
     setFilters(clearedFilters);
     setPage(1);
@@ -81,17 +84,23 @@ function TravelsPageContent() {
   }, [updateURL, limit]);
 
   // Atualizar página
-  const handlePageChange = useCallback((newPage: number) => {
-    setPage(newPage);
-    updateURL(filters, newPage, limit);
-  }, [filters, limit, updateURL]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+      updateURL(filters, newPage, limit);
+    },
+    [filters, limit, updateURL]
+  );
 
   // Atualizar limite
-  const handleLimitChange = useCallback((newLimit: number) => {
-    setLimit(newLimit);
-    setPage(1);
-    updateURL(filters, 1, newLimit);
-  }, [filters, updateURL]);
+  const handleLimitChange = useCallback(
+    (newLimit: number) => {
+      setLimit(newLimit);
+      setPage(1);
+      updateURL(filters, 1, newLimit);
+    },
+    [filters, updateURL]
+  );
 
   return (
     <div className="space-y-6">
@@ -100,25 +109,15 @@ function TravelsPageContent() {
           <h2 className="text-3xl font-bold text-gray-900">Minhas Viagens</h2>
           <p className="text-gray-600">Gerencie todos os seus orçamentos e viagens confirmadas.</p>
         </div>
-        <Link href="/dashboard/travels/new">
-          <Button className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer">
-            <PlusCircle className="h-5 w-5" />
-            <span>Nova Viagem</span>
-          </Button>
-        </Link>
       </div>
 
-      <TravelFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-      />
+      <TravelFilters filters={filters} onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
 
       <TravelTable
         travels={travels}
         pagination={pagination}
         isLoading={isLoading}
-        error={error ? 'Erro ao carregar viagens' : null}
+        error={error ? "Erro ao carregar viagens" : null}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
       />
