@@ -10,7 +10,7 @@ interface ExportButtonProps {
   filename: string;
   columns: Array<{ header: string; dataKey: string }>;
   title?: string;
-  variant?: 'default' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
 }
 

@@ -183,7 +183,7 @@ export default function GlobalSearch() {
                 {TYPE_LABELS[type as keyof typeof TYPE_LABELS]}s ({results.length})
               </div>
               <div className="space-y-1">
-                {results.map((result) => {
+                {results.map((result: SearchResult) => {
                   const Icon = TYPE_ICONS[result.type];
                   const index = currentIndex++;
 
