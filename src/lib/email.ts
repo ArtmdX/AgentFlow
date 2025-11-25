@@ -1,14 +1,14 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not defined in environment variables');
+  throw new Error("RESEND_API_KEY is not defined in environment variables");
 }
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-const APP_NAME = 'AgentFlow';
+const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const APP_NAME = "AgentFlow";
 
 interface SendPasswordResetEmailParams {
   to: string;
@@ -19,11 +19,7 @@ interface SendPasswordResetEmailParams {
 /**
  * Sends a password reset email to the user
  */
-export async function sendPasswordResetEmail({
-  to,
-  userName,
-  resetToken,
-}: SendPasswordResetEmailParams) {
+export async function sendPasswordResetEmail({ to, userName, resetToken }: SendPasswordResetEmailParams) {
   const resetUrl = `${APP_URL}/auth/reset-password?token=${resetToken}`;
 
   try {
@@ -37,14 +33,15 @@ export async function sendPasswordResetEmail({
       }),
     });
 
+    console.log("Password reset email sent:", data);
     if (error) {
-      console.error('Error sending password reset email:', error);
-      throw new Error('Failed to send password reset email');
+      console.error("Error sending password reset email:", error);
+      throw new Error("Failed to send password reset email");
     }
 
     return { success: true, data };
   } catch (error) {
-    console.error('Error in sendPasswordResetEmail:', error);
+    console.error("Error in sendPasswordResetEmail:", error);
     throw error;
   }
 }
@@ -52,13 +49,7 @@ export async function sendPasswordResetEmail({
 /**
  * HTML template for password reset email
  */
-function getPasswordResetEmailTemplate({
-  userName,
-  resetUrl,
-}: {
-  userName: string;
-  resetUrl: string;
-}) {
+function getPasswordResetEmailTemplate({ userName, resetUrl }: { userName: string; resetUrl: string }) {
   return `
 <!DOCTYPE html>
 <html lang="pt-BR">

@@ -490,7 +490,7 @@
   - Backup de configurações (2h)
 - **Dependências**: Permissões (Sprint 0)
 
-#### 3. Responsividade Mobile (20h)
+#### 3. Responsividade Mobile (15h)
 
 - **IDs**: Epic 131, Feature 157, US-7.3 (#186)
 - **Descrição**: Adaptar toda aplicação para dispositivos móveis
@@ -500,9 +500,6 @@
   - Tables responsivas (horizontal scroll ou cards) (4h)
   - Formulários otimizados para mobile (3h)
   - Touch-friendly (botões, inputs) (2h)
-  - Testes em: iPhone, Android, tablets (2h)
-  - PWA manifest (opcional) (2h)
-  - Performance em conexões 3G (1h)
 - **Dependências**: Todas as features principais implementadas
 
 #### 4. Testes Manuais e Ajustes (8h)
