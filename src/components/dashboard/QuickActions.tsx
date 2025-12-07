@@ -35,18 +35,18 @@ export default function QuickActions() {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Ações Rápidas</h3>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+        <h3 className="text-base sm:text-lg font-medium text-gray-900">Ações Rápidas</h3>
       </div>
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {actions.map((action, index) => {
             const Icon = action.icon;
             return (
               <Link
                 key={index}
                 href={action.href}
-                className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 min-h-[72px]">
                 <div className="flex items-center space-x-3">
                   <div className={`p-2 rounded-lg text-white ${action.color}`}>
                     <Icon className="h-5 w-5" />

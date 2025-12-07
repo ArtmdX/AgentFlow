@@ -1,3 +1,0 @@
-Tirar botão de criar viagem 
-
-Adicionar campo para cidade de origem no formulário de nova viagem

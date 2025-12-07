@@ -60,10 +60,25 @@ export enum Permission {
   // Settings (Admin only)
   VIEW_SETTINGS = 'view_settings',
   UPDATE_SETTINGS = 'update_settings',
+  MANAGE_SETTINGS = 'manage_settings',
 
   // Audit (Admin/Manager)
   VIEW_AUDIT_LOG = 'view_audit_log',
   VIEW_ALL_ACTIVITIES = 'view_all_activities',
+
+  // Notifications (All users)
+  VIEW_NOTIFICATIONS = 'view_notifications',
+  MANAGE_NOTIFICATIONS = 'manage_notifications',
+
+  // Email Templates (Admin only)
+  VIEW_EMAIL_TEMPLATES = 'view_email_templates',
+  CREATE_EMAIL_TEMPLATE = 'create_email_template',
+  UPDATE_EMAIL_TEMPLATE = 'update_email_template',
+  DELETE_EMAIL_TEMPLATE = 'delete_email_template',
+
+  // Email Logs (Admin/Manager)
+  VIEW_EMAIL_LOGS = 'view_email_logs',
+  VIEW_EMAIL_STATS = 'view_email_stats',
 }
 
 /**
@@ -124,10 +139,25 @@ export const rolePermissions: Record<user_role, Permission[]> = {
     // Settings
     Permission.VIEW_SETTINGS,
     Permission.UPDATE_SETTINGS,
+    Permission.MANAGE_SETTINGS,
 
     // Audit
     Permission.VIEW_AUDIT_LOG,
     Permission.VIEW_ALL_ACTIVITIES,
+
+    // Notifications
+    Permission.VIEW_NOTIFICATIONS,
+    Permission.MANAGE_NOTIFICATIONS,
+
+    // Email Templates
+    Permission.VIEW_EMAIL_TEMPLATES,
+    Permission.CREATE_EMAIL_TEMPLATE,
+    Permission.UPDATE_EMAIL_TEMPLATE,
+    Permission.DELETE_EMAIL_TEMPLATE,
+
+    // Email Logs
+    Permission.VIEW_EMAIL_LOGS,
+    Permission.VIEW_EMAIL_STATS,
   ],
 
   /**
@@ -177,6 +207,15 @@ export const rolePermissions: Record<user_role, Permission[]> = {
     // Audit
     Permission.VIEW_ALL_ACTIVITIES,
     // Não pode: VIEW_AUDIT_LOG (completo)
+
+    // Notifications
+    Permission.VIEW_NOTIFICATIONS,
+    Permission.MANAGE_NOTIFICATIONS,
+
+    // Email Logs (read-only)
+    Permission.VIEW_EMAIL_LOGS,
+    Permission.VIEW_EMAIL_STATS,
+    // Não pode: Gerenciar templates
   ],
 
   /**
@@ -211,6 +250,10 @@ export const rolePermissions: Record<user_role, Permission[]> = {
     // Reports
     Permission.VIEW_REPORTS, // Apenas seus próprios dados
     Permission.EXPORT_DATA,
+
+    // Notifications
+    Permission.VIEW_NOTIFICATIONS, // Apenas suas próprias
+    Permission.MANAGE_NOTIFICATIONS, // Apenas suas próprias
   ],
 };
 

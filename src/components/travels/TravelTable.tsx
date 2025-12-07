@@ -66,44 +66,84 @@ export function TravelTable({ travels, pagination, isLoading, error, onPageChang
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        {travels.length === 0 ? (
-          <p className="text-center text-gray-500 p-6">Nenhuma viagem encontrada.</p>
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Partida</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {travels.map(travel => (
-                <tr
-                  key={travel.id}
-                  className="hover:bg-indigo-100 cursor-pointer transition-colors"
-                  onClick={() => router.push(`/dashboard/travels/${travel.id}`)}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{travel.title}</div>
-                    <div className="text-sm text-gray-500">{travel.destination}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {`${travel.customer.firstName} ${travel.customer.lastName}`}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {formatDate(travel.departureDate)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={travel.status ?? 'Orçamento'} />
-                  </td>
+      {travels.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-center text-gray-500">Nenhuma viagem encontrada.</p>
+        </div>
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-lg shadow overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Partida</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {travels.map(travel => (
+                  <tr
+                    key={travel.id}
+                    className="hover:bg-indigo-100 cursor-pointer transition-colors"
+                    onClick={() => router.push(`/dashboard/travels/${travel.id}`)}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{travel.title}</div>
+                      <div className="text-sm text-gray-500">{travel.destination}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {`${travel.customer.firstName} ${travel.customer.lastName}`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {formatDate(travel.departureDate)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={travel.status ?? 'Orçamento'} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-4">
+            {travels.map(travel => (
+              <div
+                key={travel.id}
+                className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => router.push(`/dashboard/travels/${travel.id}`)}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-900">{travel.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">{travel.destination}</p>
+                  </div>
+                  <div className="ml-2">
+                    <StatusBadge status={travel.status ?? 'Orçamento'} />
+                  </div>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center text-sm">
+                    <span className="font-medium text-gray-700 w-20">Cliente:</span>
+                    <span className="text-gray-600">
+                      {`${travel.customer.firstName} ${travel.customer.lastName}`}
+                    </span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <span className="font-medium text-gray-700 w-20">Partida:</span>
+                    <span className="text-gray-600">{formatDate(travel.departureDate)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {onPageChange && onLimitChange && pagination.total > 0 && (
         <Pagination
           pagination={pagination}

@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
-      "Bash(npx tsc --noEmit)"
+      "Bash(npx tsc --noEmit)",
+      "Bash(cd /home/artmdx/Área de Trabalho/Projetos/AgentFlow && npm run lint:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []

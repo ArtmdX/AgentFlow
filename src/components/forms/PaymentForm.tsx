@@ -173,11 +173,11 @@ export default function PaymentForm({ travelId, payment, onSuccess, onCancel }: 
       )}
 
       {/* Botões */}
-      <div className="flex justify-end space-x-3 pt-6 border-t">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+      <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="w-full sm:w-auto min-h-[44px]">
           Cancelar
         </Button>
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full sm:w-auto min-h-[44px]">
           {isSubmitting ? "Salvando..." : isEditing ? "Atualizar Pagamento" : "Registrar Pagamento"}
         </Button>
       </div>

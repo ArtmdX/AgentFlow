@@ -9,6 +9,7 @@ import Sales12MonthsChart from '@/components/dashboard/Sales12MonthsChart';
 import TopCustomers from '@/components/dashboard/TopCustomers';
 import TopDestinations from '@/components/dashboard/TopDestinations';
 import UpcomingDepartures from '@/components/dashboard/UpcomingDepartures';
+import { AlertsDashboard } from '@/components/alerts/AlertsDashboard';
 import { CardSkeleton } from '@/components/ui/Loading';
 
 export default function Dashboard() {
@@ -35,6 +36,9 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <QuickActions />
+
+      {/* Alerts Dashboard */}
+      <AlertsDashboard />
 
       {/* Charts and Analytics */}
       {isLoading ? (

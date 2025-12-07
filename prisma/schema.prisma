@@ -7,6 +7,102 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========================================
+// ENUMS - Definidos antes dos models
+// ========================================
+
+enum activity_type {
+  status_change
+  payment
+  contact
+  note
+  created
+  updated
+}
+
+enum currency_type {
+  BRL
+  USD
+  EUR
+  ARS
+}
+
+enum document_type {
+  cpf
+  cnpj
+  passport
+  rg
+}
+
+enum gender_type {
+  M
+  F
+  other
+}
+
+enum passenger_type {
+  adult
+  child
+  infant
+}
+
+enum payment_method {
+  cash
+  credit_card
+  debit_card
+  bank_transfer
+  pix
+  check
+}
+
+enum travel_status {
+  orcamento
+  aguardando_pagamento
+  confirmada
+  em_andamento
+  finalizada
+  cancelada
+}
+
+enum user_role {
+  admin
+  agent
+  manager
+}
+
+enum NotificationType {
+  info
+  warning
+  success
+  error
+}
+
+enum NotificationPriority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum EmailStatus {
+  pending
+  sent
+  failed
+  cancelled
+}
+
+enum QueueStatus {
+  pending
+  processing
+  completed
+  failed
+  cancelled
+}
+
+// ========================================
+// MODELS
+// ========================================
+
 model User {
   id                   String                @id @default(uuid()) @db.Uuid
   email                String                @unique @db.VarChar(255)
@@ -23,6 +119,8 @@ model User {
   payments             Payment[]             @relation("PaymentCreatedBy")
   travels              Travel[]              @relation("TravelAgent")
   passwordResetTokens  PasswordResetToken[]  @relation("UserPasswordResetTokens")
+  notifications            Notification[]
+  notificationPreferences  NotificationPreference?
 
   @@map("users")
 }
@@ -191,61 +289,196 @@ model City {
   @@map("cities")
 }
 
-enum activity_type {
-  status_change
-  payment
-  contact
-  note
-  created
-  updated
+model Notification {
+  id              String              @id @default(uuid()) @db.Uuid
+  type            NotificationType    @default(info)
+  priority        NotificationPriority @default(normal)
+  title           String              @db.VarChar(255)
+  message         String
+  actionUrl       String?             @map("action_url") @db.VarChar(500)
+  isRead          Boolean             @default(false) @map("is_read")
+  readAt          DateTime?           @map("read_at") @db.Timestamp(6)
+
+  userId          String              @map("user_id") @db.Uuid
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Entidade relacionada (opcional)
+  relatedEntity   String?             @map("related_entity") @db.VarChar(50)
+  relatedEntityId String?             @map("related_entity_id") @db.Uuid
+
+  createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@index([userId, isRead, createdAt], map: "idx_notifications_user_read_created")
+  @@index([userId, createdAt], map: "idx_notifications_user_created")
+  @@map("notifications")
 }
 
-enum currency_type {
-  BRL
-  USD
-  EUR
-  ARS
+model NotificationPreference {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // In-app notifications
+  inAppEnabled                Boolean @default(true) @map("in_app_enabled")
+  travelCreated               Boolean @default(true) @map("travel_created")
+  travelStatusChanged         Boolean @default(true) @map("travel_status_changed")
+  paymentReceived             Boolean @default(true) @map("payment_received")
+  travelUpcoming              Boolean @default(true) @map("travel_upcoming")
+  paymentDueSoon              Boolean @default(true) @map("payment_due_soon")
+  paymentOverdue              Boolean @default(true) @map("payment_overdue")
+  documentsPending            Boolean @default(true) @map("documents_pending")
+
+  // Email notifications
+  emailEnabled                Boolean @default(true) @map("email_enabled")
+  emailTravelCreated          Boolean @default(true) @map("email_travel_created")
+  emailPaymentReceived        Boolean @default(true) @map("email_payment_received")
+  emailTravelUpcoming         Boolean @default(true) @map("email_travel_upcoming")
+  emailPaymentDueSoon         Boolean @default(true) @map("email_payment_due_soon")
+  emailPaymentOverdue         Boolean @default(true) @map("email_payment_overdue")
+  emailDocumentsPending       Boolean @default(false) @map("email_documents_pending")
+
+  // Digest mode
+  digestMode                  Boolean @default(false) @map("digest_mode")
+  digestTime                  String  @default("08:00") @map("digest_time") @db.VarChar(5)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("notification_preferences")
 }
 
-enum document_type {
-  cpf
-  cnpj
-  passport
-  rg
+model EmailLog {
+  id              String       @id @default(uuid()) @db.Uuid
+  templateType    String       @map("template_type") @db.VarChar(100)
+  subject         String       @db.VarChar(255)
+  to              String       @db.VarChar(255)
+  cc              String?      @db.VarChar(255)
+  bcc             String?      @db.VarChar(255)
+  from            String       @db.VarChar(255)
+
+  status          EmailStatus  @default(pending)
+  sentAt          DateTime?    @map("sent_at") @db.Timestamp(6)
+  failedAt        DateTime?    @map("failed_at") @db.Timestamp(6)
+  errorMessage    String?      @map("error_message")
+
+  // Metadata
+  userId          String?      @map("user_id") @db.Uuid
+  relatedEntity   String?      @map("related_entity") @db.VarChar(50)
+  relatedEntityId String?      @map("related_entity_id") @db.Uuid
+
+  // Resend response
+  resendId        String?      @map("resend_id") @db.VarChar(100)
+  resendStatus    String?      @map("resend_status") @db.VarChar(50)
+
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@index([status, createdAt], map: "idx_email_logs_status_created")
+  @@index([userId], map: "idx_email_logs_user")
+  @@map("email_logs")
 }
 
-enum gender_type {
-  M
-  F
-  other
+model EmailTemplate {
+  id              String   @id @default(uuid()) @db.Uuid
+  type            String   @unique @db.VarChar(100)
+  name            String   @db.VarChar(255)
+  description     String?
+  subject         String   @db.VarChar(255)
+  htmlContent     String   @map("html_content")
+  textContent     String?  @map("text_content")
+
+  // Variables available (JSON array of strings)
+  availableVars   Json     @map("available_vars")
+
+  isActive        Boolean  @default(true) @map("is_active")
+  version         Int      @default(1)
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@index([type, isActive], map: "idx_email_templates_type_active")
+  @@map("email_templates")
 }
 
-enum passenger_type {
-  adult
-  child
-  infant
+model EmailQueue {
+  id              String       @id @default(uuid()) @db.Uuid
+  templateType    String       @map("template_type") @db.VarChar(100)
+  to              String       @db.VarChar(255)
+  subject         String       @db.VarChar(255)
+  htmlContent     String       @map("html_content")
+  textContent     String?      @map("text_content")
+
+  status          QueueStatus  @default(pending)
+  attempts        Int          @default(0)
+  maxAttempts     Int          @default(3) @map("max_attempts")
+  nextAttemptAt   DateTime?    @map("next_attempt_at") @db.Timestamp(6)
+
+  // Metadata
+  userId          String?      @map("user_id") @db.Uuid
+  relatedEntity   String?      @map("related_entity") @db.VarChar(50)
+  relatedEntityId String?      @map("related_entity_id") @db.Uuid
+  variables       Json?
+
+  processedAt     DateTime?    @map("processed_at") @db.Timestamp(6)
+  errorMessage    String?      @map("error_message")
+  emailLogId      String?      @unique @map("email_log_id") @db.Uuid
+
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@index([status, nextAttemptAt], map: "idx_email_queue_status_next")
+  @@index([createdAt], map: "idx_email_queue_created")
+  @@map("email_queue")
 }
 
-enum payment_method {
-  cash
-  credit_card
-  debit_card
-  bank_transfer
-  pix
-  check
-}
+model AgencySettings {
+  id              String   @id @default(uuid()) @db.Uuid
 
-enum travel_status {
-  orcamento
-  aguardando_pagamento
-  confirmada
-  em_andamento
-  finalizada
-  cancelada
-}
+  // Dados da Agência
+  agencyName      String   @default("AgentFlow") @map("agency_name") @db.VarChar(255)
+  logoUrl         String?  @map("logo_url") @db.VarChar(500)
+  phone           String?  @db.VarChar(20)
+  email           String?  @db.VarChar(255)
+  website         String?  @db.VarChar(255)
 
-enum user_role {
-  admin
-  agent
-  manager
+  // Endereço
+  addressStreet       String?  @map("address_street") @db.VarChar(255)
+  addressNumber       String?  @map("address_number") @db.VarChar(20)
+  addressComplement   String?  @map("address_complement") @db.VarChar(100)
+  addressNeighborhood String?  @map("address_neighborhood") @db.VarChar(100)
+  addressCity         String?  @map("address_city") @db.VarChar(100)
+  addressState        String?  @map("address_state") @db.VarChar(50)
+  addressZipCode      String?  @map("address_zip_code") @db.VarChar(20)
+  addressCountry      String?  @default("Brasil") @map("address_country") @db.VarChar(100)
+
+  // Configurações SMTP
+  smtpHost        String?  @map("smtp_host") @db.VarChar(255)
+  smtpPort        Int?     @default(587) @map("smtp_port")
+  smtpUser        String?  @map("smtp_user") @db.VarChar(255)
+  smtpPassword    String?  @map("smtp_password") @db.VarChar(255)
+  smtpSecure      Boolean? @default(false) @map("smtp_secure")
+  smtpFromEmail   String?  @map("smtp_from_email") @db.VarChar(255)
+  smtpFromName    String?  @map("smtp_from_name") @db.VarChar(255)
+
+  // Configurações Financeiras
+  defaultCurrency currency_type? @default(BRL) @map("default_currency")
+  interestRate    Decimal?       @default(0) @map("interest_rate") @db.Decimal(5, 2)
+  fineRate        Decimal?       @default(0) @map("fine_rate") @db.Decimal(5, 2)
+
+  // Taxas de Câmbio (JSON com rates)
+  exchangeRates   Json?    @map("exchange_rates")
+
+  // Termos e Políticas
+  termsOfService  String?  @map("terms_of_service")
+  privacyPolicy   String?  @map("privacy_policy")
+
+  // Configurações de Notificações (globais)
+  notificationsEnabled Boolean? @default(true) @map("notifications_enabled")
+  emailNotificationsEnabled Boolean? @default(true) @map("email_notifications_enabled")
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("agency_settings")
 }

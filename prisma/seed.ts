@@ -16,6 +16,7 @@ async function main() {
   await prisma.travel.deleteMany();
   await prisma.customer.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.agencySettings.deleteMany();
 
   // 2. CRIAÇÃO DOS USUÁRIOS (ADMIN, MANAGER, AGENTS)
   console.log('Criando usuários...');
@@ -152,6 +153,28 @@ async function main() {
     }
   }
   console.log(`-> Viagens, passageiros e pagamentos criados.`);
+
+  // 5. CRIAÇÃO DAS CONFIGURAÇÕES PADRÃO DA AGÊNCIA
+  console.log('Criando configurações padrão da agência...');
+  await prisma.agencySettings.create({
+    data: {
+      agencyName: 'AgentFlow',
+      defaultCurrency: 'BRL',
+      interestRate: 1.0, // 1% ao mês
+      fineRate: 2.0, // 2% de multa
+      smtpPort: 587,
+      smtpSecure: false,
+      addressCountry: 'Brasil',
+      notificationsEnabled: true,
+      emailNotificationsEnabled: true,
+      exchangeRates: {
+        USD: 5.0,
+        EUR: 5.5,
+        ARS: 0.02,
+      },
+    },
+  });
+  console.log('-> Configurações padrão criadas.');
 
   console.log('\n========================================');
   console.log('Seed concluído com sucesso!');

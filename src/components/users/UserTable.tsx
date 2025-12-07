@@ -125,98 +125,168 @@ export function UserTable({ initialUsers, onUserUpdate }: UserTableProps) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        {users.length === 0 ? (
-          <p className="text-center text-gray-500 p-6">Nenhum usuário encontrado.</p>
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nome
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Telefone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nível
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map(user => (
-                <tr
-                  key={user.id}
-                  className="hover:bg-blue-50 cursor-pointer transition-colors duration-150"
-                  onClick={() => router.push(`/dashboard/users/${user.id}`)}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {`${user.firstName} ${user.lastName}`}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-700">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-700">{user.phone || '-'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getRoleBadge(user.role)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(user.isActive)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={e => handleEditClick(e, user.id)}
-                        className="p-1 rounded-full text-gray-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        title="Editar usuário"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </button>
-
-                      <button
-                        onClick={e => handleResetPasswordClick(e, user)}
-                        className="p-1 rounded-full text-gray-500 hover:text-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                        title="Resetar senha"
-                      >
-                        <Key className="h-5 w-5" />
-                      </button>
-
-                      <button
-                        onClick={e => handleToggleActiveClick(e, user)}
-                        className={`p-1 rounded-full ${
-                          user.isActive
-                            ? 'text-gray-500 hover:text-red-700'
-                            : 'text-gray-500 hover:text-green-700'
-                        } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
-                        title={user.isActive ? 'Desativar usuário' : 'Ativar usuário'}
-                      >
-                        {user.isActive ? (
-                          <PowerOff className="h-5 w-5" />
-                        ) : (
-                          <Power className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </td>
+      {users.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-center text-gray-500">Nenhum usuário encontrado.</p>
+        </div>
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-lg shadow overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nome
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Telefone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nível
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {users.map(user => (
+                  <tr
+                    key={user.id}
+                    className="hover:bg-blue-50 cursor-pointer transition-colors duration-150"
+                    onClick={() => router.push(`/dashboard/users/${user.id}`)}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {`${user.firstName} ${user.lastName}`}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-700">{user.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-700">{user.phone || '-'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getRoleBadge(user.role)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getStatusBadge(user.isActive)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={e => handleEditClick(e, user.id)}
+                          className="p-1 rounded-full text-gray-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          title="Editar usuário"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </button>
+
+                        <button
+                          onClick={e => handleResetPasswordClick(e, user)}
+                          className="p-1 rounded-full text-gray-500 hover:text-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                          title="Resetar senha"
+                        >
+                          <Key className="h-5 w-5" />
+                        </button>
+
+                        <button
+                          onClick={e => handleToggleActiveClick(e, user)}
+                          className={`p-1 rounded-full ${
+                            user.isActive
+                              ? 'text-gray-500 hover:text-red-700'
+                              : 'text-gray-500 hover:text-green-700'
+                          } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                          title={user.isActive ? 'Desativar usuário' : 'Ativar usuário'}
+                        >
+                          {user.isActive ? (
+                            <PowerOff className="h-5 w-5" />
+                          ) : (
+                            <Power className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-4">
+            {users.map(user => (
+              <div
+                key={user.id}
+                className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => router.push(`/dashboard/users/${user.id}`)}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {`${user.firstName} ${user.lastName}`}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">{user.email}</p>
+                    <p className="text-sm text-gray-600">{user.phone || '-'}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 mb-3">
+                  {getRoleBadge(user.role)}
+                  {getStatusBadge(user.isActive)}
+                </div>
+
+                <div className="flex gap-2 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={e => handleEditClick(e, user.id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors min-h-[44px]"
+                    title="Editar"
+                  >
+                    <Edit className="h-5 w-5" />
+                    <span className="text-sm font-medium">Editar</span>
+                  </button>
+
+                  <button
+                    onClick={e => handleResetPasswordClick(e, user)}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-orange-50 text-orange-700 rounded-md hover:bg-orange-100 transition-colors min-h-[44px]"
+                    title="Resetar"
+                  >
+                    <Key className="h-5 w-5" />
+                    <span className="text-sm font-medium">Resetar</span>
+                  </button>
+
+                  <button
+                    onClick={e => handleToggleActiveClick(e, user)}
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors min-h-[44px] ${
+                      user.isActive
+                        ? 'bg-red-50 text-red-700 hover:bg-red-100'
+                        : 'bg-green-50 text-green-700 hover:bg-green-100'
+                    }`}
+                    title={user.isActive ? 'Desativar' : 'Ativar'}
+                  >
+                    {user.isActive ? (
+                      <PowerOff className="h-5 w-5" />
+                    ) : (
+                      <Power className="h-5 w-5" />
+                    )}
+                    <span className="text-sm font-medium hidden sm:inline">
+                      {user.isActive ? 'Desativar' : 'Ativar'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Dialog de Confirmação - Reset de Senha */}
       <ConfirmDialog
